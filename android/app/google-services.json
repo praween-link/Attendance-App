@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "214147796173",
+    "project_id": "gth-qr-scanner",
+    "storage_bucket": "gth-qr-scanner.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:214147796173:android:2e3bfeb25603e2e0266d84",
+        "android_client_info": {
+          "package_name": "com.gth.gthqrscanner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "214147796173-jelplfbbufsboiq4otrm6quqbck9rqo5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0r1fEsDr9qo5IH5XwphSfJuxogDXiFiE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "214147796173-jelplfbbufsboiq4otrm6quqbck9rqo5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

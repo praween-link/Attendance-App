@@ -1,0 +1,1 @@
+enum MyLectures { softSkill, webDevelopment, socialMedia }
