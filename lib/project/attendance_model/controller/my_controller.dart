@@ -4,19 +4,38 @@ import 'package:gthqrscanner/controller/lecture_controller.dart';
 import 'package:gthqrscanner/project/attendance_model/students/tile_box.dart';
 import 'package:gthqrscanner/project/colors/mycolor.dart';
 import 'package:gthqrscanner/project/google_sheets/attendance_sheets.dart';
-import 'package:gthqrscanner/project/model/lectures.dart';
 
 class MyController extends ChangeNotifier {
-  MyLectures selectedLecture = MyLectures.softSkill;
-  void changeSelectedLecture(MyLectures selected) {
-    selectedLecture = selected;
-    notifyListeners();
-  }
+  //--------------------------------------
 
-  //---
+  //--- Scannering result data ---
   String qrresult = 'No data';
-  void changeQRResult(String result) {
+  String scannedRollNo = '';
+  bool availableInDB = false;
+  Map<String, dynamic> sturentsRowData = {};
+  void changeQRResult(String result) async {
     qrresult = result;
+    scannedRollNo = qrresult.split('\n')[0];
+    availableInDB = studentsId.contains(scannedRollNo);
+    //
+    if (availableInDB) {
+      int rr = sturentsRowData[scannedRollNo] ?? -1;
+      final r = await AttendanceSheetApi.attendanceSheet!.cells
+          .cell(column: 1, row: rr);
+
+      if (r.value == scannedRollNo) {
+        await AttendanceSheetApi.attendanceSheet!.values.insertValue('Present',
+            column: lastColumn,
+            row: rr);
+      }
+      _firestore
+          .collection('Attendance')
+          .doc(LectureController.lectureId)
+          .collection(LectureController.lectureCollection)
+          .doc(scannedRollNo)
+          .update({'status': true});
+    }
+    //
     notifyListeners();
   }
   //
@@ -49,9 +68,12 @@ class MyController extends ChangeNotifier {
 
   void addNewStudent(
       String roll, String name, String phone, String date, int row, bool p) {
-    _firestore.collection('Attendance')
-      .doc(LectureController.lectureId)
-      .collection(LectureController.lectureCollection).doc(roll).set(
+    _firestore
+        .collection('Attendance')
+        .doc(LectureController.lectureId)
+        .collection(LectureController.lectureCollection)
+        .doc(roll)
+        .set(
       {
         'roll': roll,
         'name': name,
@@ -73,9 +95,12 @@ class MyController extends ChangeNotifier {
       //
       AttendanceSheetApi.insertDate(context, date, row, col + 1);
       //
-      _firestore.collection('Attendance')
-      .doc(LectureController.lectureId)
-      .collection(LectureController.lectureCollection).doc('lastRowNo').update(
+      _firestore
+          .collection('Attendance')
+          .doc(LectureController.lectureId)
+          .collection(LectureController.lectureCollection)
+          .doc('lastRowNo')
+          .update(
         {'date': date, 'column': col + 1},
       ).then(
         (value) {},
@@ -85,26 +110,18 @@ class MyController extends ChangeNotifier {
   }
 
   void lastRowNo(int row, int col) {
-    _firestore.collection('Attendance')
-      .doc(LectureController.lectureId)
-      .collection(LectureController.lectureCollection).doc('lastRowNo').update(
+    _firestore
+        .collection('Attendance')
+        .doc(LectureController.lectureId)
+        .collection(LectureController.lectureCollection)
+        .doc('lastRowNo')
+        .update(
       {'row': row, 'column': col},
     ).then(
       (value) {},
     );
     notifyListeners();
   }
-
-  // void makeAttendance(String roll, bool p, int row, int nextClm) async {
-  //   final r = await AttendanceSheetApi.attendanceSheet!.cells
-  //       .cell(column: 1, row: row);
-  //   if (r.value == roll) {
-  //     await AttendanceSheetApi.attendanceSheet!.values
-  //         .insertValue('Present', column: nextClm, row: row);
-  //   }
-  //   _firestore.collection('Students').doc(roll).update({'status': p});
-  //   notifyListeners();
-  // }
 
   List<String> studentsId = [];
   bool searching = false;
@@ -114,23 +131,29 @@ class MyController extends ChangeNotifier {
     notifyListeners();
   }
 
+  ///
+  ///
+  ///
   getAllStudents() {
     return StreamBuilder<QuerySnapshot>(
-      stream: _firestore.collection('Attendance')
-      .doc(LectureController.lectureId)
-      .collection(LectureController.lectureCollection).snapshots(),
+      stream: _firestore
+          .collection('Attendance')
+          .doc(LectureController.lectureId)
+          .collection(LectureController.lectureCollection)
+          .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasData) {
           var mydata = snapshot.data!.docs;
-
           List<Map<String, dynamic>> data = [];
-
           if (searchingKey == '') {
             for (var d in mydata) {
               if (d.id == 'lastRowNo') {
-                studentsId.add(d.id);
                 updateCurrentLastRow(d['row'], d['column'], d['date']);
               } else {
+                studentsId.add(d.id);
+                studentsId = studentsId.toSet().toList();
+                sturentsRowData.addAll({'${d['roll']}': d['row'], '${d['roll']}status': d['status']});
+                //
                 data.add({
                   'roll': d['roll'],
                   'name': d['name'],
@@ -138,14 +161,18 @@ class MyController extends ChangeNotifier {
                   'row': d['row'],
                   'status': d['status'],
                 });
+                data = data.toSet().toList();
               }
             }
           } else {
             for (var d in mydata) {
               if (d.id == 'lastRowNo') {
-                studentsId.add(d.id);
                 updateCurrentLastRow(d['row'], d['column'], d['date']);
               } else {
+                studentsId.add(d.id);
+                studentsId = studentsId.toSet().toList();
+                sturentsRowData.addAll({'${d['roll']}': d['row'], '${d['roll']}status': d['status']});
+                //
                 if (d['roll'].contains(searchingKey) ||
                     d['name'].contains(searchingKey)) {
                   data.add({
@@ -155,6 +182,7 @@ class MyController extends ChangeNotifier {
                     'row': d['row'],
                     'status': d['status'],
                   });
+                  data = data.toSet().toList();
                 }
               }
             }
@@ -163,14 +191,6 @@ class MyController extends ChangeNotifier {
           return ListView.builder(
             itemCount: data.length + 1,
             itemBuilder: (BuildContext context, int index) {
-              //
-              // index == 0
-              //     ? print('')
-              //     : data[index - 1].id == 'lastRowNo'
-              //         ? updateCurrentLastRow(data[index - 1]['row'],
-              //             data[index - 1]['column'], data[index - 1]['date'])
-              //         : print('');
-              //
               return index == 0
                   ? Padding(
                       padding: const EdgeInsets.only(
@@ -182,9 +202,9 @@ class MyController extends ChangeNotifier {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Today: ${currentDate.toString()}'),
+                              Text('Today: ${currentDate.toString()}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 17, color: Colors.white),),
                               Text(
-                                  "Lecture: ${LectureController.sheetName} (google sheet's name)"),
+                                  "Lecture: ${LectureController.sheetName} (google sheet's name)", style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 17, color: Colors.white),),
                               TextField(
                                 onChanged: (value) => updateKey(value),
                                 decoration: const InputDecoration(
@@ -207,7 +227,7 @@ class MyController extends ChangeNotifier {
                         decoration: BoxDecoration(
                           boxShadow: [
                             BoxShadow(
-                              color: MyColor.buttonSplaceColor.withOpacity(0.6),
+                              color: MyColor.buttonSplaceColor5.withOpacity(0.6),
                               offset: const Offset(0, 0),
                               blurRadius: 5,
                               spreadRadius: 5,
@@ -244,12 +264,35 @@ class MyController extends ChangeNotifier {
     );
   }
 
+  List<Map<String, dynamic>> mydata = [];
+  getAllStudentsFromDB() async {
+    var snapshots = _firestore
+        .collection('Attendance')
+        .doc(LectureController.lectureId)
+        .collection(LectureController.lectureCollection)
+        .snapshots();
+    await for (var snapshot in snapshots) {
+      for (var data in snapshot.docs) {
+        mydata.add({
+          'roll': data.data()['roll'],
+          'name': data.data()['name'],
+          'phone': data.data()['phone'],
+          'row': data.data()['row'],
+          'status': data.data()['status'],
+        });
+      }
+    }
+  }
+
   void resetAllStudentsAttendance(List<String> studentsId) {
     List<String> ids = studentsId.toSet().toList();
     for (String id in ids) {
-      _firestore.collection('Attendance')
-      .doc(LectureController.lectureId)
-      .collection(LectureController.lectureCollection).doc(id).update(
+      _firestore
+          .collection('Attendance')
+          .doc(LectureController.lectureId)
+          .collection(LectureController.lectureCollection)
+          .doc(id)
+          .update(
         {'status': false},
       ).then(
         (value) => print(''),

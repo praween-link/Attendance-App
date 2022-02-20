@@ -2,7 +2,7 @@
     package="com.example.gthqrscanner">
     <uses-permission android:name="android.permission.CAMERA" />
    <application
-        android:label="gthqrscanner"
+        android:label="GTH Attendance App"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

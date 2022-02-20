@@ -1,13 +1,21 @@
+import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gthqrscanner/project/attendance_model/add/add_student.dart';
 import 'package:gthqrscanner/project/attendance_model/controller/my_controller.dart';
 import 'package:gthqrscanner/project/colors/mycolor.dart';
 import 'package:provider/provider.dart';
 
-class AllStudents extends StatelessWidget {
+class AllStudents extends StatefulWidget {
   static const routeName = '/allStudents';
   const AllStudents({Key? key}) : super(key: key);
 
+  @override
+  State<AllStudents> createState() => _AllStudentsState();
+}
+
+class _AllStudentsState extends State<AllStudents> {
+  String scanningError = '';
   @override
   Widget build(BuildContext context) {
     var controller = Provider.of<MyController>(context);
@@ -15,8 +23,12 @@ class AllStudents extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: MyColor.buttonColor,
         title: const Text('Students'),
-        // title: Text(
-        //     'Today: ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}'),
+        leading: Builder(
+          builder: (BuildContext context) => GestureDetector(
+            child: const Icon(Icons.chevron_left_sharp, size: 32,),
+            onTap: () => Navigator.pop(context),
+          ),
+        ),
         actions: [
           IconButton(
             onPressed: () async {
@@ -27,6 +39,12 @@ class AllStudents extends StatelessWidget {
                   controller.lastColumn);
             },
             icon: const Icon(Icons.date_range_rounded),
+          ),
+          IconButton(
+            onPressed: () {
+              qrscan(context);
+            },
+            icon: const Icon(Icons.camera),
           ),
           IconButton(
             onPressed: () =>
@@ -66,14 +84,6 @@ class AllStudents extends StatelessWidget {
                               controller.studentsId);
                           Navigator.pop(context);
                         }),
-                    ListTile(
-                      title: const Text('Add New Student'),
-                      onTap: () {},
-                    ),
-                    ListTile(
-                      title: const Text('Add New Student'),
-                      onTap: () {},
-                    ),
                   ],
                 ),
               ),
@@ -83,5 +93,29 @@ class AllStudents extends StatelessWidget {
       ),
       body: controller.getAllStudents(),
     );
+  }
+
+  //
+  Future qrscan(BuildContext constext) async {
+    var controller = Provider.of<MyController>(context, listen: false);
+    try {
+      await BarcodeScanner.scan().then(
+        (value) async {
+          controller.changeQRResult(value.rawContent.toString());
+        },
+      );
+    } on PlatformException catch (error) {
+      if (error.code == BarcodeScanner.cameraAccessDenied) {
+        setState(() =>
+            scanningError = 'The user did not grant the camera permission!');
+      } else {
+        setState(() => scanningError = 'Unknown error: $error');
+      }
+    } on FormatException {
+      setState(() => scanningError =
+          'null (User returned using the "back"-button before scan');
+    } catch (error) {
+      setState(() => scanningError = 'Unknown error: $error');
+    }
   }
 }

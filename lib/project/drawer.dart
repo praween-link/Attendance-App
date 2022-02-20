@@ -1,10 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:gthqrscanner/controller/lecture_controller.dart';
-import 'package:gthqrscanner/project/google_sheets/attendance_sheets.dart';
-import 'package:provider/provider.dart';
-
-import 'attendance_model/students/view_all_students.dart';
+import 'package:gthqrscanner/project/add_lecture.dart';
 import 'colors/mycolor.dart';
 
 class MyDrawer extends StatelessWidget {
@@ -16,48 +11,43 @@ class MyDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var lectureController =
-        Provider.of<LectureController>(context, listen: false);
     return Drawer(
       child: ListView(
         children: [
           DrawerHeader(
-              decoration: BoxDecoration(
-                color: MyColor.buttonColor,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: const [
-                  Text('Geeta Technical Hub'),
-                ],
-              )),
-          ListTile(
-            leading: const Icon(Icons.event_available_rounded),
-            title: const Text('Soft Skill'),
-            onTap: () {
-              AttendanceSheetApi.init();
-              lectureController.setLecture(
-                  'SoftSkill', 'SoftSkills', 'Soft Skill');
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const AllStudents(),
+            decoration: BoxDecoration(
+              color: MyColor.buttonSplaceColor2,
+              image: DecorationImage(
+                image: const AssetImage(
+                  "assets/img/ghublogo.png",
                 ),
-              );
-            },
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(Colors.grey.withOpacity(0.1), BlendMode.dstATop),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: const [
+                Text(
+                  'Geeta Technical Hub',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 22,
+                      color: Colors.white),
+                ),
+                SizedBox(height: 15),
+              ],
+            ),
           ),
           ListTile(
             leading: const Icon(Icons.event_available_rounded),
-            title: const Text('Social Media'),
+            title: const Text('Add New Lecture'),
             onTap: () {
-              AttendanceSheetApi.init();
-              lectureController.setLecture(
-                  'SocialMedia', 'SocialMedias', 'Social Media');
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const AllStudents(),
+                  builder: (context) => const AddNewLecture(),
                 ),
               );
             },

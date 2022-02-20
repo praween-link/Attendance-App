@@ -19,7 +19,7 @@ class _ScanQRCodeState extends State<ScanQRCode> {
   Widget build(BuildContext context) {
     return FloatingActionButton.extended(
       backgroundColor: MyColor.buttonColor,
-      splashColor: MyColor.buttonSplaceColor,
+      splashColor: MyColor.buttonSplaceColor5,
       onPressed: () {
         qrscan(context);
       },
@@ -40,18 +40,20 @@ class _ScanQRCodeState extends State<ScanQRCode> {
     var controller = Provider.of<MyController>(context, listen: false);
     try {
       await BarcodeScanner.scan().then(
-        (value) => controller.changeQRResult(value.rawContent.toString()),
+        (value) async{
+          controller.changeQRResult(value.rawContent.toString());
+        },
       );
     } on PlatformException catch (error) {
       if (error.code == BarcodeScanner.cameraAccessDenied) {
-        setState(
-            () => scanningError = 'The user did not grant the camera permission!');
+        setState(() =>
+            scanningError = 'The user did not grant the camera permission!');
       } else {
         setState(() => scanningError = 'Unknown error: $error');
       }
     } on FormatException {
-      setState(() =>
-          scanningError = 'null (User returned using the "back"-button before scan');
+      setState(() => scanningError =
+          'null (User returned using the "back"-button before scan');
     } catch (error) {
       setState(() => scanningError = 'Unknown error: $error');
     }

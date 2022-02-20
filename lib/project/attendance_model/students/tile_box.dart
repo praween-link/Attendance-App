@@ -62,8 +62,8 @@ class TileCard extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(LectureController.sheetName),
-                      Text(data[index]['row'].toString()),
+                      Text(LectureController.sheetName, style: const TextStyle(fontWeight: FontWeight.w500),),
+                      Text('ID: ${data[index]['row'].toString()}'),
                       Text(
                         'Roll No: ${data[index]['roll']}',
                         style: const TextStyle(
@@ -93,17 +93,6 @@ class TileCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 5.0),
-                      // Container(
-                      //     decoration: const BoxDecoration(
-                      //       color: Colors.white,
-                      //       borderRadius: BorderRadius.all(
-                      //         Radius.circular(5.0),
-                      //       ),
-                      //     ),
-                      // child: Padding(
-                      //   padding:
-                      //       const EdgeInsets.only(left: 3.0, right: 3.0),
-                      // child:
                       Text(
                         '*',
                         style: TextStyle(

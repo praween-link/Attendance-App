@@ -6,20 +6,6 @@ import 'package:gthqrscanner/project/google_sheets/student.dart';
 import 'package:provider/provider.dart';
 
 class AttendanceSheetApi {
-//   static const credential = r'''
-// {
-//   "type": "service_account",
-//   "project_id": "qrscan-341306",
-//   "private_key_id": "93b7021499b9a1b7945e225d1b0c0ea16b184fec",
-//   "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCq64JgqEV4LpXP\nq8vKFXtEzgQGo+pyoj+kEmyFzZFvcfgwRf0fk6cqOQxXoccvD9WBUEWNRhgEAiE4\nQC3ZHcc89zzq4Jsd+R9lhCPLx558n95zSPA5wdFJccHfBdVAGS64fiPmxao8maQR\nIuTnZgrXXxYrxhqkP1ERamsQvz1uJsD3ca4uB1fv/pZjHAd158lxN7bDfq2pj/xI\njJeEj1YMTIlwFcEsxl8GvepB6PyffJr9jWUUTbYIZRqwSt651FnYRAf0kwOs+79d\nkLGWXm+LJIdeaN3FSosND+ZmKDpxFRlZnl7iC0qlucVsJ7md7GTdq1hdvczkgHcu\nk+uU6VZDAgMBAAECggEADofKBDSZ/08ajlahExODcMSA5B2gS1GOzoCAeFmTESHj\nwxrYG4yebAEAkxyeRdp3QLCV0R5R4VlbAKC4JRqaewzbwW4J0eEBccxrjKHyT875\nhtx/C7H1/GPu4upoiDP73FRg8fgA8njvUUOhqShsKIYdaOhFEIyPdEcTRg+0Bb6j\nENk8DhrLc1LARB3vlqvkXphXLIfrYJLyoAG80px4uhEl5hDWzGuB9U6gUGd50CYs\nhS0D2+q8p65Rw3xHCs4IOqkkfPQVvRuvC/EY/36JE3s5Kp7mg+5ZVYSJyftBplbH\nP4UixY11sNF2jWXdBbgnAvJ1ZaAC8ukQGt3RFxOLdQKBgQDcSw6QqGRyCUCQQLdL\n+WfWUB0TOCuhBePq4VGILZx9DzrIPRTEbMFFEZhKHcpnPVZzb7v3hhpCO6Kb2oCh\noVb1MZn02gQgRqmnYIg+0mB+CwacJ0axdakfW59hrnSBgQtVVN+MfyQitEH+dd2C\n5YUFs0ykhR8uv9YudBHn+pCFRwKBgQDGn7zVXix8uHx5j+bNVQ3hsU131Jt9pilQ\nPUlPyfF6AxJC/izxY5TJa0aWd7VxuM7MoSkeTE6U1x9KTWn/wEn5xE6KA1na9Zcr\nay/f41987eVrNgcUlirLHEw6cQgfgzC5yAfARiy7uP2Vhzy1ayJNFJGkqA5/f9lD\n7iJaIM7VJQKBgAI/reViIqxbVdJjJrvazumMJc/VafSZ18rFBA0M0iUgq6vxm62p\nootu84wGI9PL9370LAoJz2jPrQhEQb3kpLuaBwVN2G7v6blwrdNeWGfQ+v9LE1iq\nZ9CPIeBgZIYR6Ci11hZcEeVcy7OqRlmYuDPnsaeYSEo04R3WR3yDvUfvAoGAFTPw\nIIbREO9QullWNg0iUjlvH5+eiac3Oc2RCedw06mIRYaEnbAXrfi5rE5THDSyPr3l\necqDiPf96xygeCC6xOLjz2/UI7+bx5LFpYzMILX0i6FU2Cm/n7cBnCt8xoBmry5f\nRXM4S0HQMCojnOo22yua8IzQH2QyeUHugNiHu9ECgYATRoIUdlZd3pIyAoP1BtQ9\njai3AiAvlCjPRGUHKnXgEL0wYtBa0R+MQ79iyJAH1nUSF4Gqau0jaNNby+dsY0xE\nF6vYRIkn413uB7HAZtmN+CuHDEP4/H4nQo45qsBrdTlG5axyCe2zV+oJvPpRP1H4\n8ViITKXE5GFfIK5ck/lo9g==\n-----END PRIVATE KEY-----\n",
-//   "client_email": "qr-scan@qrscan-341306.iam.gserviceaccount.com",
-//   "client_id": "117064412806588845094",
-//   "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-//   "token_uri": "https://oauth2.googleapis.com/token",
-//   "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-//   "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/qr-scan%40qrscan-341306.iam.gserviceaccount.com"
-// }
-// ''';
   static const _credentials = r'''
   {
   "type": "service_account",
@@ -37,7 +23,6 @@ class AttendanceSheetApi {
 ''';
 
   static const _spreadSheetId = '188e4oNSwBbbXYd_amyrnwnp4scU1eA711Pqx-dlTYFE';
-  // static const spreadSheetId = '1XG-6nUqky4Mdt-zHXu0IDRif0v9aKPc8VmxOyiIIjcw';
   static final _gsheets = GSheets(_credentials);
   static Worksheet? attendanceSheet;
 
@@ -53,12 +38,6 @@ class AttendanceSheetApi {
       print('init Error: $error');
     }
   }
-
-  // static _tableHeader() async {
-  //   await _attendanceSheet!.values.insertValue('roll', column: 1, row: 1);
-  //   await _attendanceSheet!.values.insertValue('name', column: 2, row: 1);
-  //   await _attendanceSheet!.values.insertValue('email', column: 3, row: 1);
-  // }
 
   static Future<Worksheet> _getWorkSheet(Spreadsheet spreadsheet,
       {required String title}) async {
@@ -76,46 +55,18 @@ class AttendanceSheetApi {
     Provider.of<MyController>(context, listen: false)
     //     // .updateTest(await _attendanceSheet!.values.row(1));
         .updateTest(await attendanceSheet!.values.map.allRows());
-    // for(int i=1; i<5; i++){
-    //   Provider.of<MyController>(context, listen: false)
-    //     .updateTest(await _attendanceSheet!.values.map.row(i));
-    // }
-    // Provider.of<MyController>(context, listen: false)
-    //     .updateTest(await _attendanceSheet!.values.map.row(1));
     
   }
   static Future insertDate(BuildContext context, String date, int r, int c) async {
     if (attendanceSheet == null) return;
     await attendanceSheet!.values.insertValue(date, column: c, row: r);
-    // Provider.of<MyController>(context, listen: false)
-    // //     // .updateTest(await _attendanceSheet!.values.row(1));
-    //     .updateTest(await attendanceSheet!.values.map.allRows());
     
   }
   static Future getRows(BuildContext context) async {
     if (attendanceSheet == null) return;
     // _attendanceSheet!.values.map.appendRows(newRowList);
     Provider.of<MyController>(context, listen: false)
-    //     // .updateTest(await _attendanceSheet!.values.row(1));
         .updateTest(await attendanceSheet!.values.map.allRows());
-    // for(int i=1; i<5; i++){
-    //   Provider.of<MyController>(context, listen: false)
-    //     .updateTest(await _attendanceSheet!.values.map.row(i));
-    // }
-    // Provider.of<MyController>(context, listen: false)
-    //     .updateTest(await _attendanceSheet!.values.map.row(1));
     
   }
-  // static Future insertColumn(List<Map<String, dynamic>> today) async {
-  //   // final secondColumn = ['a', 'b', 'c', 'd', 'e'];
-  //   if (_attendanceSheet == null) return;
-  // //   final firstRow = ['index', 'letter', 'number', 'label'];
-  // // await _attendanceSheet!.values.insertRow(5, firstRow);
-
-  // // insert list in column 'A', starting from row #2
-  // final firstColumn = ['0', '1', '2', '3', '4'];
-  // await _attendanceSheet!.values.insertColumn(5, firstColumn, fromRow: 4);
-
-  //   // await _attendanceSheet!.values.map.insertColumnByKey('Today', secondColumn);
-  // }
 }
