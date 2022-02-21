@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gthqrscanner/project/add_lecture.dart';
+import 'package:gthqrscanner/project/connect_new_sheet.dart';
 import 'colors/mycolor.dart';
 
 class MyDrawer extends StatelessWidget {
@@ -42,12 +42,12 @@ class MyDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.event_available_rounded),
-            title: const Text('Add New Lecture'),
+            title: const Text('Connect New Sheet'),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const AddNewLecture(),
+                  builder: (context) => const ConnectNewSheet(),
                 ),
               );
             },

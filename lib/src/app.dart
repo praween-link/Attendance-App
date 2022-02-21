@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:gthqrscanner/controller/branch_controller.dart';
 import 'package:gthqrscanner/controller/lecture_controller.dart';
 import 'package:gthqrscanner/project/attendance_model/controller/my_controller.dart';
 import 'package:gthqrscanner/routes/my_routes.dart';
@@ -33,6 +34,9 @@ class MyApp extends StatelessWidget {
             ),
             ChangeNotifierProvider<LectureController>(
               create: (context) => LectureController(),
+            ),
+            ChangeNotifierProvider<BranchController>(
+              create: (context) => BranchController(),
             ),
           ],
           child: MaterialApp(

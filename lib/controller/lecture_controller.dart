@@ -1,18 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gthqrscanner/project/attendance_model/students/view_all_students.dart';
 import 'package:gthqrscanner/project/colors/mycolor.dart';
 import 'package:gthqrscanner/project/google_sheets/attendance_sheets.dart';
 
+import 'branch_controller.dart';
+
 class LectureController extends ChangeNotifier {
   final _firebase = FirebaseFirestore.instance;
-  
+
   static String lectureId = '';
   static String lectureCollection = '';
-  static String sheetName = ''; 
-
-  //
+  static String sheetName = '';
 
   void setLecture(String lId, String lCol, String sheetname) {
     lectureId = lId;
@@ -29,18 +28,25 @@ class LectureController extends ChangeNotifier {
       required int row,
       required int column,
       required String startDate}) {
-    _firebase.collection('Attendance').doc(key).set({
+    _firebase
+        .collection('AttendanceP')
+        .doc(BranchController.branchId)
+        .collection('${BranchController.branchId}s')
+        .doc(key)
+        .set({
       'sheetname': sheetName,
       'title': title,
     }).then((value) {
       _firebase
-          .collection('Attendance')
+          .collection('AttendanceP')
+          .doc(BranchController.branchId)
+          .collection('${BranchController.branchId}s')
           .doc(key)
           .collection('${key}s')
           .doc('lastRowNo')
           .set({
         'column': column,
-        'row': row - 1,
+        'row': row,
         'sheet': sheetName,
         'status': false,
         'date': startDate,
@@ -50,7 +56,11 @@ class LectureController extends ChangeNotifier {
 
   getAllLecutresFromDB() {
     return StreamBuilder<QuerySnapshot>(
-      stream: _firebase.collection('Attendance').snapshots(),
+      stream: _firebase
+          .collection('AttendanceP')
+          .doc(BranchController.branchId)
+          .collection('${BranchController.branchId}s')
+          .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasData) {
           var data = snapshot.data!.docs;
@@ -60,6 +70,7 @@ class LectureController extends ChangeNotifier {
                 return index == 0
                     ? Column(
                         children: [
+                          
                           const SizedBox(height: 35),
                           Container(
                             margin: const EdgeInsets.only(left: 50, right: 50),
@@ -71,12 +82,12 @@ class LectureController extends ChangeNotifier {
                           ),
                           const SizedBox(height: 20),
                           Text(
-                            'Geeta Technical Hub',//Attendance App
+                            'Geeta Technical Hub', //Attendance App
                             style: TextStyle(
                               color: MyColor.textcolor5,
                               fontSize: 22.0,
                               fontWeight: FontWeight.w900,
-                              letterSpacing: 1.2, 
+                              letterSpacing: 1.2,
                             ),
                           ),
                           Text(
@@ -89,64 +100,83 @@ class LectureController extends ChangeNotifier {
                             ),
                           ),
                           const SizedBox(height: 30),
-                        ],
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.only(
-                            left: 38.0, right: 38.0, bottom: 8.0, top: 8.0),
-                        child: GestureDetector(
-                          onTap: () {
-                            setLecture(
-                                data[index - 1].id,
-                                '${data[index - 1].id}s',
-                                data[index - 1]['sheetname']);
-                            AttendanceSheetApi.init();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const AllStudents(),
-                              ),
-                            );
-                          },
-                          child: Container(
+                          Container(
                             child: Padding(
-                              padding: const EdgeInsets.all(18.0),
+                              padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                data[index - 1]['title'],
+                                BranchController.spreadSheetTitle,
                                 style: const TextStyle(
                                   fontSize: 18.0,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white,
+                                  fontWeight: FontWeight.w400,
+                                  letterSpacing: 1,
                                 ),
-                                textAlign: TextAlign.left,
                               ),
                             ),
                             decoration: BoxDecoration(
-                              color: MyColor.buttonColor,
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(5.0),
-                                topRight: Radius.circular(50.0),
-                                bottomLeft: Radius.circular(5.0),
-                                bottomRight: Radius.circular(50.0),
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  offset: const Offset(4, 8),
-                                  color: MyColor.buttonSplaceColor5,
-                                  blurRadius: 10.0,
-                                  spreadRadius: 2,
-                                ),
-                                BoxShadow(
-                                  offset: const Offset(2, 4),
-                                  color: MyColor.buttonSplaceColor2,
-                                  blurRadius: 9.0,
-                                  spreadRadius: 2,
-                                ),
-                              ]
+                              color: MyColor.buttonColor.withOpacity(0.2),
+                              borderRadius: const BorderRadius.all(Radius.circular(5.0),),
                             ),
                           ),
-                        ),
-                      );
+                          const SizedBox(height: 15),
+                        ],
+                      )
+                    : data[index - 1].id != 'Connector'
+                        ? Padding(
+                            padding: const EdgeInsets.only(
+                                left: 38.0, right: 38.0, bottom: 8.0, top: 8.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                setLecture(
+                                    data[index - 1].id,
+                                    '${data[index - 1].id}s',
+                                    data[index - 1]['sheetname']);
+                                AttendanceSheetApi.init();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const AllStudents(),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(18.0),
+                                  child: Text(
+                                    data[index - 1]['title'],
+                                    style: const TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                                decoration: BoxDecoration(
+                                    color: MyColor.buttonColor,
+                                    borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(5.0),
+                                      topRight: Radius.circular(50.0),
+                                      bottomLeft: Radius.circular(5.0),
+                                      bottomRight: Radius.circular(50.0),
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        offset: const Offset(4, 8),
+                                        color: MyColor.buttonSplaceColor5,
+                                        blurRadius: 10.0,
+                                        spreadRadius: 2,
+                                      ),
+                                      BoxShadow(
+                                        offset: const Offset(2, 4),
+                                        color: MyColor.buttonSplaceColor2,
+                                        blurRadius: 9.0,
+                                        spreadRadius: 2,
+                                      ),
+                                    ]),
+                              ),
+                            ),
+                          )
+                        : const Text('');
               });
         } else if (snapshot.hasError) {
           return const Text('Something is wrong!');

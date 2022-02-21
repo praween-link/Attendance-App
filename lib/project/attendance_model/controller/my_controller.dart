@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:gthqrscanner/controller/branch_controller.dart';
 import 'package:gthqrscanner/controller/lecture_controller.dart';
 import 'package:gthqrscanner/project/attendance_model/students/tile_box.dart';
 import 'package:gthqrscanner/project/colors/mycolor.dart';
@@ -13,7 +14,7 @@ class MyController extends ChangeNotifier {
   String scannedRollNo = '';
   bool availableInDB = false;
   Map<String, dynamic> sturentsRowData = {};
-  void changeQRResult(String result) async {
+  void changeQRResult({required String result}) async {
     qrresult = result;
     scannedRollNo = qrresult.split('\n')[0];
     availableInDB = studentsId.contains(scannedRollNo);
@@ -29,7 +30,7 @@ class MyController extends ChangeNotifier {
             row: rr);
       }
       _firestore
-          .collection('Attendance')
+          .collection('AttendanceP').doc(BranchController.branchId).collection('${BranchController.branchId}s')
           .doc(LectureController.lectureId)
           .collection(LectureController.lectureCollection)
           .doc(scannedRollNo)
@@ -66,10 +67,10 @@ class MyController extends ChangeNotifier {
     // notifyListeners();
   }
 
-  void addNewStudent(
-      String roll, String name, String phone, String date, int row, bool p) {
+  void addNewStudent({
+      required String roll, required String name, required String phone, required String date, required int row,required bool p}) {
     _firestore
-        .collection('Attendance')
+        .collection('AttendanceP').doc(BranchController.branchId).collection('${BranchController.branchId}s')
         .doc(LectureController.lectureId)
         .collection(LectureController.lectureCollection)
         .doc(roll)
@@ -88,7 +89,7 @@ class MyController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addTodayDate(BuildContext context, String date, int row, int col) async {
+  void addTodayDate({required BuildContext context, required String date, required int row, required int col}) async {
     final r = await AttendanceSheetApi.attendanceSheet!.cells
         .cell(column: col, row: 1);
     if (r.value != date) {
@@ -96,7 +97,7 @@ class MyController extends ChangeNotifier {
       AttendanceSheetApi.insertDate(context, date, row, col + 1);
       //
       _firestore
-          .collection('Attendance')
+          .collection('AttendanceP').doc(BranchController.branchId).collection('${BranchController.branchId}s')
           .doc(LectureController.lectureId)
           .collection(LectureController.lectureCollection)
           .doc('lastRowNo')
@@ -109,9 +110,9 @@ class MyController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void lastRowNo(int row, int col) {
+  void lastRowNo({required int row, required int col}) {
     _firestore
-        .collection('Attendance')
+        .collection('AttendanceP').doc(BranchController.branchId).collection('${BranchController.branchId}s')
         .doc(LectureController.lectureId)
         .collection(LectureController.lectureCollection)
         .doc('lastRowNo')
@@ -137,7 +138,7 @@ class MyController extends ChangeNotifier {
   getAllStudents() {
     return StreamBuilder<QuerySnapshot>(
       stream: _firestore
-          .collection('Attendance')
+          .collection('AttendanceP').doc(BranchController.branchId).collection('${BranchController.branchId}s')
           .doc(LectureController.lectureId)
           .collection(LectureController.lectureCollection)
           .snapshots(),
@@ -267,7 +268,7 @@ class MyController extends ChangeNotifier {
   List<Map<String, dynamic>> mydata = [];
   getAllStudentsFromDB() async {
     var snapshots = _firestore
-        .collection('Attendance')
+        .collection('AttendanceP').doc(BranchController.branchId).collection('${BranchController.branchId}s')
         .doc(LectureController.lectureId)
         .collection(LectureController.lectureCollection)
         .snapshots();
@@ -284,14 +285,14 @@ class MyController extends ChangeNotifier {
     }
   }
 
-  void resetAllStudentsAttendance(List<String> studentsId) {
+  void resetAllStudentsAttendance({required List<String> studentsId}) {
     List<String> ids = studentsId.toSet().toList();
-    for (String id in ids) {
+    for (String studentid in ids) {
       _firestore
-          .collection('Attendance')
+          .collection('AttendanceP').doc(BranchController.branchId).collection('${BranchController.branchId}s')
           .doc(LectureController.lectureId)
           .collection(LectureController.lectureCollection)
-          .doc(id)
+          .doc(studentid)
           .update(
         {'status': false},
       ).then(

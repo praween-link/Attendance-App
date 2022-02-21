@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gthqrscanner/controller/lecture_controller.dart';
+import 'package:gthqrscanner/controller/branch_controller.dart';
 import 'package:gthqrscanner/project/attendance_model/controller/my_controller.dart';
 import 'package:gthqrscanner/project/colors/mycolor.dart';
 import 'package:gthqrscanner/project/drawer.dart';
@@ -18,8 +18,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     var controller = Provider.of<MyController>(context);
-    var lectureController =
-        Provider.of<LectureController>(context, listen: false);
+    var branchController =
+        Provider.of<BranchController>(context);
     return Scaffold(
       appBar: AppBar(
         leading: Builder(
@@ -31,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: MyColor.appBarColor,
         title: const Text('GTH Attendance App'),
       ),
-      body: lectureController.getAllLecutresFromDB(),
+      body: branchController.getAllBranchFromDB(),
       
       drawer: MyDrawer(data: controller.allStudents),
     );

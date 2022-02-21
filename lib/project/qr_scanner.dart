@@ -7,7 +7,8 @@ import 'attendance_model/controller/my_controller.dart';
 import 'colors/mycolor.dart';
 
 class ScanQRCode extends StatefulWidget {
-  const ScanQRCode({Key? key}) : super(key: key);
+  const ScanQRCode({Key? key, required this.id}) : super(key: key);
+  final String id;
 
   @override
   _ScanQRCodeState createState() => _ScanQRCodeState();
@@ -40,8 +41,8 @@ class _ScanQRCodeState extends State<ScanQRCode> {
     var controller = Provider.of<MyController>(context, listen: false);
     try {
       await BarcodeScanner.scan().then(
-        (value) async{
-          controller.changeQRResult(value.rawContent.toString());
+        (value) async {
+          controller.changeQRResult(result: value.rawContent.toString());
         },
       );
     } on PlatformException catch (error) {

@@ -28,14 +28,22 @@ class _AddNewStudentState extends State<AddNewStudent> {
         title: const Text('Add New Student'),
         leading: Builder(
           builder: (BuildContext context) => GestureDetector(
-            child: const Icon(Icons.chevron_left_sharp, size: 32,),
+            child: const Icon(
+              Icons.chevron_left_sharp,
+              size: 32,
+            ),
             onTap: () => Navigator.pop(context),
           ),
         ),
         actions: [
-          Center(child: Padding(
+          Center(
+              child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text((controller.lastRow-2).toString(), style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),),
+            child: Text(
+              (controller.lastRow - 2).toString(),
+              style:
+                  const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+            ),
           )),
         ],
       ),
@@ -45,13 +53,15 @@ class _AddNewStudentState extends State<AddNewStudent> {
           key: _formKey,
           child: Column(
             children: [
-              Text(LectureController.sheetName, style: TextStyle(
-                              color: MyColor.textcolor5,
-                              fontSize: 22.0,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 1.2, 
-                            ),),//
-                            const Divider(),
+              Text(
+                LectureController.sheetName,
+                style: const TextStyle(
+                  fontSize: 22.0,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.2,
+                ),
+              ), //
+              const Divider(),
               TextFormField(
                 decoration: const InputDecoration(
                   hintText: 'Enter student roll number',
@@ -112,30 +122,35 @@ class _AddNewStudentState extends State<AddNewStudent> {
                     };
                     await AttendanceSheetApi.insertRow([student], context);
                     controller.addNewStudent(
-                        roll,
-                        name,
-                        phone,
-                        '${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year} ${DateTime.now().hour}:${DateTime.now().minute}',
-                        controller.lastRow + 1,
-                        false);
+                        roll: roll,
+                        name: name,
+                        phone: phone,
+                        date:
+                            '${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year} ${DateTime.now().hour}:${DateTime.now().minute}',
+                        row: controller.lastRow + 1,
+                        p: false);
                     controller.lastRowNo(
-                        controller.lastRow + 1, controller.lastColumn);
+                        row: controller.lastRow + 1,
+                        col: controller.lastColumn);
                     Navigator.pop(context);
                   }
                 },
                 child: const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Text('Add New Student', style: TextStyle(fontSize: 18.0),),
+                  child: Text(
+                    'Add New Student',
+                    style: TextStyle(fontSize: 18.0),
+                  ),
                 ),
                 style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(MyColor.buttonColor),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0),
-                        ),
-                      ),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(MyColor.buttonColor),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18.0),
                     ),
+                  ),
+                ),
               ),
             ],
           ),

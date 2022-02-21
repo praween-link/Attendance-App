@@ -1,14 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-import 'project/google_sheets/attendance_sheets.dart';
 import 'src/app.dart';
 import 'src/settings/settings_controller.dart';
 import 'src/settings/settings_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await AttendanceSheetApi.init();
   await Firebase.initializeApp();
   // Set up the SettingsController, which will glue user settings to multiple
   // Flutter Widgets.

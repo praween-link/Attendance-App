@@ -25,18 +25,20 @@ class _AllStudentsState extends State<AllStudents> {
         title: const Text('Students'),
         leading: Builder(
           builder: (BuildContext context) => GestureDetector(
-            child: const Icon(Icons.chevron_left_sharp, size: 32,),
+            child: const Icon(
+              Icons.chevron_left_sharp,
+              size: 32,
+            ),
             onTap: () => Navigator.pop(context),
           ),
         ),
         actions: [
           IconButton(
             onPressed: () async {
-              controller.addTodayDate(
-                  context,
-                  '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
-                  1,
-                  controller.lastColumn);
+              controller.addTodayDate(context: context,
+                  date: '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
+                  row: 1,
+                  col: controller.lastColumn);
             },
             icon: const Icon(Icons.date_range_rounded),
           ),
@@ -69,10 +71,10 @@ class _AllStudentsState extends State<AllStudents> {
                       trailing: const Icon(Icons.date_range_rounded),
                       onTap: () async {
                         controller.addTodayDate(
-                            context,
-                            '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
-                            1,
-                            controller.lastColumn);
+                            context: context,
+                            date: '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
+                            row: 1,
+                            col: controller.lastColumn);
                         Navigator.pop(context);
                       },
                     ),
@@ -81,7 +83,7 @@ class _AllStudentsState extends State<AllStudents> {
                         trailing: const Icon(Icons.restart_alt),
                         onTap: () {
                           controller.resetAllStudentsAttendance(
-                              controller.studentsId);
+                              studentsId: controller.studentsId);
                           Navigator.pop(context);
                         }),
                   ],
@@ -101,7 +103,7 @@ class _AllStudentsState extends State<AllStudents> {
     try {
       await BarcodeScanner.scan().then(
         (value) async {
-          controller.changeQRResult(value.rawContent.toString());
+          controller.changeQRResult(result: value.rawContent.toString());
         },
       );
     } on PlatformException catch (error) {

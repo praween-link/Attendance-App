@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:gsheets/gsheets.dart';
+import 'package:gthqrscanner/controller/branch_controller.dart';
 import 'package:gthqrscanner/controller/lecture_controller.dart';
 import 'package:gthqrscanner/project/attendance_model/controller/my_controller.dart';
 import 'package:gthqrscanner/project/google_sheets/student.dart';
@@ -21,14 +22,15 @@ class AttendanceSheetApi {
 }
 
 ''';
-
-  static const _spreadSheetId = '188e4oNSwBbbXYd_amyrnwnp4scU1eA711Pqx-dlTYFE';
+  //Email: attendance@custom-resource-341212.iam.gserviceaccount.com
+  // static const _spreadSheetId = '188e4oNSwBbbXYd_amyrnwnp4scU1eA711Pqx-dlTYFE';
+  // static const _spreadSheetId = '16DGaFt2bQRdXhfGDZQulYcGlYdTv6RnvjvJwhNF1FMc';
   static final _gsheets = GSheets(_credentials);
   static Worksheet? attendanceSheet;
 
   static Future init() async {
     try {
-      final spresdsheet = await _gsheets.spreadsheet(_spreadSheetId);
+      final spresdsheet = await _gsheets.spreadsheet(BranchController.spreadSheetId);
       attendanceSheet = await _getWorkSheet(spresdsheet, title: LectureController.sheetName);
 
       final firstRow = Student.getFields();

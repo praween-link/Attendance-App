@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gthqrscanner/project/add_lecture.dart';
 import 'package:gthqrscanner/project/attendance_model/add/add_student.dart';
 import 'package:gthqrscanner/project/attendance_model/students/view_all_students.dart';
+import 'package:gthqrscanner/project/connect_new_sheet.dart';
 import 'package:gthqrscanner/project/home/home_screen.dart';
 import 'package:gthqrscanner/project/splash_screen.dart';
 import 'package:gthqrscanner/src/sample_feature/sample_item_details_view.dart';
@@ -32,6 +33,8 @@ class Routes {
             return const AddNewLecture();
           case SplashScreen.routeName:
             return const SplashScreen();
+          case ConnectNewSheet.routeName:
+            return const ConnectNewSheet();
           default:
             return const HomeScreen();
         }

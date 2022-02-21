@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:gthqrscanner/controller/branch_controller.dart';
 import 'package:gthqrscanner/controller/lecture_controller.dart';
 import 'package:gthqrscanner/project/attendance_model/controller/my_controller.dart';
 import 'package:gthqrscanner/project/colors/mycolor.dart';
@@ -122,7 +123,7 @@ class TileCard extends StatelessWidget {
                             row: data[index]['row']);
                   }
                   _firestore
-                      .collection('Attendance')
+                      .collection('AttendanceP').doc(BranchController.branchId).collection('${BranchController.branchId}s')
                       .doc(LectureController.lectureId)
                       .collection(LectureController.lectureCollection)
                       .doc(data[index]['roll'])
