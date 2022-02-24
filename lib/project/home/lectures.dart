@@ -19,7 +19,7 @@ class Lectures extends StatelessWidget {
         leading: Builder(
           builder: (BuildContext context) => GestureDetector(
             child: const Icon(
-              Icons.chevron_left_sharp,
+              Icons.chevron_left_sharp, 
               size: 32,
             ),
             onTap: () => Navigator.pop(context),
