@@ -68,7 +68,7 @@ class BranchController extends ChangeNotifier {
                       )
                     : Padding(
                         padding: const EdgeInsets.only(
-                            left: 38.0, right: 38.0, bottom: 8.0, top: 8.0),
+                            left: 18.0, right: 18.0, bottom: 8.0, top: 8.0),
                         child: GestureDetector(
                           onTap: () {
                             branchId = data[index - 1].id;
@@ -77,8 +77,7 @@ class BranchController extends ChangeNotifier {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const Lectures(
-                                ),
+                                builder: (context) => const Lectures(),
                               ),
                             );
                           },
@@ -90,30 +89,20 @@ class BranchController extends ChangeNotifier {
                                 style: const TextStyle(
                                   fontSize: 18.0,
                                   fontWeight: FontWeight.w500,
-                                  color: Colors.white,
                                 ),
                                 textAlign: TextAlign.left,
                               ),
                             ),
                             decoration: BoxDecoration(
                                 color: MyColor.buttonColor,
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(5.0),
-                                  topRight: Radius.circular(50.0),
-                                  bottomLeft: Radius.circular(5.0),
-                                  bottomRight: Radius.circular(50.0),
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(50.0),
                                 ),
                                 boxShadow: [
                                   BoxShadow(
                                     offset: const Offset(4, 8),
                                     color: MyColor.buttonSplaceColor5,
-                                    blurRadius: 10.0,
-                                    spreadRadius: 2,
-                                  ),
-                                  BoxShadow(
-                                    offset: const Offset(2, 4),
-                                    color: MyColor.buttonSplaceColor2,
-                                    blurRadius: 9.0,
+                                    blurRadius: 8.0,
                                     spreadRadius: 2,
                                   ),
                                 ]),

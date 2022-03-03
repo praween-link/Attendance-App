@@ -22,12 +22,13 @@ class _HomeScreenState extends State<HomeScreen> {
         Provider.of<BranchController>(context);
     return Scaffold(
       appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) => GestureDetector(
-            child: Image.asset('assets/img/menu_icon.png'),
-            onTap: () => Scaffold.of(context).openDrawer(),
-          ),
-        ),
+        // leading: Icon(Icons.menu),
+        // // leading: Builder(
+        // //   builder: (BuildContext context) => GestureDetector(
+        // //     child: Image.asset('assets/img/menu_icon.png'),
+        // //     onTap: () => Scaffold.of(context).openDrawer(),
+        // //   ),
+        // // ),
         backgroundColor: MyColor.appBarColor,
         title: const Text('GTH Attendance App'),
       ),

@@ -13,6 +13,13 @@ class LectureController extends ChangeNotifier {
   static String lectureCollection = '';
   static String sheetName = '';
 
+  
+  // bool indecator = true;
+  // void indecators(bool ind) {
+  //   indecator = ind;
+  //   notifyListeners();
+  // }
+
   void setLecture(String lId, String lCol, String sheetname) {
     lectureId = lId;
     lectureCollection = lCol;
@@ -120,10 +127,9 @@ class LectureController extends ChangeNotifier {
                           const SizedBox(height: 15),
                         ],
                       )
-                    : data[index - 1].id != 'Connector'
-                        ? Padding(
+                    : Padding(
                             padding: const EdgeInsets.only(
-                                left: 38.0, right: 38.0, bottom: 8.0, top: 8.0),
+                                left: 18.0, right: 18.0, bottom: 8.0, top: 8.0),
                             child: GestureDetector(
                               onTap: () {
                                 setLecture(
@@ -146,7 +152,6 @@ class LectureController extends ChangeNotifier {
                                     style: const TextStyle(
                                       fontSize: 18.0,
                                       fontWeight: FontWeight.w500,
-                                      color: Colors.white,
                                     ),
                                     textAlign: TextAlign.left,
                                   ),
@@ -163,20 +168,13 @@ class LectureController extends ChangeNotifier {
                                       BoxShadow(
                                         offset: const Offset(4, 8),
                                         color: MyColor.buttonSplaceColor5,
-                                        blurRadius: 10.0,
-                                        spreadRadius: 2,
-                                      ),
-                                      BoxShadow(
-                                        offset: const Offset(2, 4),
-                                        color: MyColor.buttonSplaceColor2,
-                                        blurRadius: 9.0,
+                                        blurRadius: 8.0,
                                         spreadRadius: 2,
                                       ),
                                     ]),
                               ),
                             ),
-                          )
-                        : const Text('');
+                          );
               });
         } else if (snapshot.hasError) {
           return const Text('Something is wrong!');

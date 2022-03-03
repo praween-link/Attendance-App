@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:gthqrscanner/project/attendance_model/add/add_student.dart';
 import 'package:gthqrscanner/project/attendance_model/controller/my_controller.dart';
 import 'package:gthqrscanner/project/colors/mycolor.dart';
+import 'package:gthqrscanner/project/google_sheets/attendance_sheets.dart';
 import 'package:provider/provider.dart';
 
 class AllStudents extends StatefulWidget {
@@ -21,7 +22,7 @@ class _AllStudentsState extends State<AllStudents> {
     var controller = Provider.of<MyController>(context);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: MyColor.buttonColor,
+        backgroundColor: MyColor.appBarColor,
         title: const Text('Students'),
         leading: Builder(
           builder: (BuildContext context) => GestureDetector(
@@ -35,6 +36,8 @@ class _AllStudentsState extends State<AllStudents> {
         actions: [
           IconButton(
             onPressed: () async {
+              // final r = await AttendanceSheetApi.attendanceSheet!.cells
+              //         .cell(column: 1, row: 1);
               controller.addTodayDate(context: context,
                   date: '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
                   row: 1,

@@ -21,8 +21,8 @@ class _AddNewLectureState extends State<AddNewLecture> {
   String key = '';
   String title = '';
   String sheetName = '';
-  int row = -1;
-  int column = -1;
+  int row = 1;
+  int column = 5;
   @override
   Widget build(BuildContext context) {
     var lectureController =
@@ -96,6 +96,7 @@ class _AddNewLectureState extends State<AddNewLecture> {
                 ),
                 const SizedBox(height: 5.0),
                 TextFormField(
+                  initialValue: '1',
                   onChanged: (value) => setState(() => row = int.parse(value)),
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
@@ -110,6 +111,7 @@ class _AddNewLectureState extends State<AddNewLecture> {
                 ),
                 const SizedBox(height: 5.0),
                 TextFormField(
+                  initialValue: '5',
                   onChanged: (value) =>
                       setState(() => column = int.parse(value)),
                   keyboardType: TextInputType.number,

@@ -32,7 +32,7 @@ class Lectures extends StatelessWidget {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => AddNewLecture(),
+                  builder: (context) =>const AddNewLecture(),
                 ),
               );
           }, icon: const Icon(Icons.add))

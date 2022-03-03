@@ -23,7 +23,7 @@ class TileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var controller = Provider.of<MyController>(context);
+    var myController = Provider.of<MyController>(context);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -63,8 +63,16 @@ class TileCard extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(LectureController.sheetName, style: const TextStyle(fontWeight: FontWeight.w500),),
+                      Text(
+                        LectureController.sheetName,
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      ),
                       Text('ID: ${data[index]['row'].toString()}'),
+                      Text(
+                        'Branch & Year: ${data[index]['caterory']}',
+                        style: const TextStyle(
+                            fontSize: 16.0, fontWeight: FontWeight.w400),
+                      ),
                       Text(
                         'Roll No: ${data[index]['roll']}',
                         style: const TextStyle(
@@ -82,22 +90,19 @@ class TileCard extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        data[index]['status']
-                            ? 'Persent'
-                            : 'Absent',
+                        data[index]['status'] ? 'Persent' : 'Absent',
                         style: TextStyle(
                           fontSize: 14.0,
                           fontWeight: FontWeight.w400,
-                          color: data[index]['status']
-                              ? Colors.green
-                              : Colors.red,
+                          color:
+                              data[index]['status'] ? Colors.green : Colors.red,
                         ),
                       ),
                       const SizedBox(width: 5.0),
-                      Text(
+                      const Text(
                         '*',
                         style: TextStyle(
-                            color: MyColor.buttonColor,
+                            color: Color(0xffFF6600),
                             fontSize: 18.0,
                             fontWeight: FontWeight.w800),
                       ),
@@ -107,27 +112,33 @@ class TileCard extends StatelessWidget {
                   )
                 ],
               ),
+              // myController.attendanceProcess ? const CircularProgressIndicator() : 
               FlutterSwitch(
                 value: data[index]['status'],
                 onToggle: (value) async {
+                  // myController.updateAttendanceProcess(true);
+                  var rowIndex = await data[index]['row'];
                   final r = await AttendanceSheetApi.attendanceSheet!.cells
-                      .cell(column: 1, row: data[index]['row']);
-                      
+                      .cell(column: 1, row: rowIndex);
+
                   if (r.value == data[index]['roll']) {
+                  var rowindex = await data[index]['row'];
                     await AttendanceSheetApi.attendanceSheet!.values
                         .insertValue(
-                            !data[index]['status']
-                                ? 'Present'
-                                : 'Adsent',
-                            column: controller.lastColumn,
-                            row: data[index]['row']);
+                            !data[index]['status'] ? 'Present' : 'Absent',
+                            column: myController.lastColumn,
+                            row: rowindex);
                   }
-                  _firestore
-                      .collection('AttendanceP').doc(BranchController.branchId).collection('${BranchController.branchId}s')
+                  await _firestore
+                      .collection('AttendanceP')
+                      .doc(BranchController.branchId)
+                      .collection('${BranchController.branchId}s')
                       .doc(LectureController.lectureId)
                       .collection(LectureController.lectureCollection)
                       .doc(data[index]['roll'])
                       .update({'status': !data[index]['status']});
+                  
+                  // myController.updateAttendanceProcess(false);
                   // makeAttendance(data[index]['roll'],
                   //     !data[index]['status'], data[index]['row'], 5);
                 },

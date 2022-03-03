@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gthqrscanner/controller/branch_controller.dart';
@@ -8,6 +10,18 @@ import 'package:gthqrscanner/project/google_sheets/attendance_sheets.dart';
 
 class MyController extends ChangeNotifier {
   //--------------------------------------
+
+  bool studentAdding = false;
+  void updateAddingProccess(bool isAdding) {
+    studentAdding = isAdding;
+    notifyListeners();
+  }
+
+  // bool attendanceProcess = false;
+  // void updateAttendanceProcess(bool attendance) {
+  //   attendanceProcess = attendance;
+  //   notifyListeners();
+  // }
 
   //--- Scannering result data ---
   String qrresult = 'No data';
@@ -25,12 +39,13 @@ class MyController extends ChangeNotifier {
           .cell(column: 1, row: rr);
 
       if (r.value == scannedRollNo) {
-        await AttendanceSheetApi.attendanceSheet!.values.insertValue('Present',
-            column: lastColumn,
-            row: rr);
+        await AttendanceSheetApi.attendanceSheet!.values
+            .insertValue('Present', column: lastColumn, row: rr);
       }
       _firestore
-          .collection('AttendanceP').doc(BranchController.branchId).collection('${BranchController.branchId}s')
+          .collection('AttendanceP')
+          .doc(BranchController.branchId)
+          .collection('${BranchController.branchId}s')
           .doc(LectureController.lectureId)
           .collection(LectureController.lectureCollection)
           .doc(scannedRollNo)
@@ -43,7 +58,7 @@ class MyController extends ChangeNotifier {
 
   dynamic test = '';
   List<Map<String, dynamic>> allStudents = [];
-  void updateTest(dynamic t) {
+  Future updateTest(dynamic t) async {
     test = t;
     // allStudents.add(t);
     notifyListeners();
@@ -67,10 +82,18 @@ class MyController extends ChangeNotifier {
     // notifyListeners();
   }
 
-  void addNewStudent({
-      required String roll, required String name, required String phone, required String date, required int row,required bool p}) {
+  Future addNewStudent(
+      {required String roll,
+      required String name,
+      required String phone,
+      required String caterory,
+      required String date,
+      required int row,
+      required bool p}) async {
     _firestore
-        .collection('AttendanceP').doc(BranchController.branchId).collection('${BranchController.branchId}s')
+        .collection('AttendanceP')
+        .doc(BranchController.branchId)
+        .collection('${BranchController.branchId}s')
         .doc(LectureController.lectureId)
         .collection(LectureController.lectureCollection)
         .doc(roll)
@@ -79,6 +102,7 @@ class MyController extends ChangeNotifier {
         'roll': roll,
         'name': name,
         'phone': phone,
+        'caterory': caterory,
         'row': row,
         'status': p,
         'attendance': {}
@@ -89,15 +113,23 @@ class MyController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addTodayDate({required BuildContext context, required String date, required int row, required int col}) async {
-    final r = await AttendanceSheetApi.attendanceSheet!.cells
-        .cell(column: col, row: 1);
-    if (r.value != date) {
+  // String xx = 'xx';
+
+  void addTodayDate(
+      {required BuildContext context,
+      required String date,
+      required int row,
+      required int col}) async {
+    final r = await AttendanceSheetApi.attendanceSheet!.values.value(column: col, row: 1);
+    // xx = '$col, $r, "d-$date"';
+    if (r != "d-$date") {
       //
-      AttendanceSheetApi.insertDate(context, date, row, col + 1);
+      AttendanceSheetApi.insertDate(context, "d-$date", row, col + 1);
       //
       _firestore
-          .collection('AttendanceP').doc(BranchController.branchId).collection('${BranchController.branchId}s')
+          .collection('AttendanceP')
+          .doc(BranchController.branchId)
+          .collection('${BranchController.branchId}s')
           .doc(LectureController.lectureId)
           .collection(LectureController.lectureCollection)
           .doc('lastRowNo')
@@ -110,9 +142,11 @@ class MyController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void lastRowNo({required int row, required int col}) {
+  Future lastRowNo({required int row, required int col}) async {
     _firestore
-        .collection('AttendanceP').doc(BranchController.branchId).collection('${BranchController.branchId}s')
+        .collection('AttendanceP')
+        .doc(BranchController.branchId)
+        .collection('${BranchController.branchId}s')
         .doc(LectureController.lectureId)
         .collection(LectureController.lectureCollection)
         .doc('lastRowNo')
@@ -138,7 +172,9 @@ class MyController extends ChangeNotifier {
   getAllStudents() {
     return StreamBuilder<QuerySnapshot>(
       stream: _firestore
-          .collection('AttendanceP').doc(BranchController.branchId).collection('${BranchController.branchId}s')
+          .collection('AttendanceP')
+          .doc(BranchController.branchId)
+          .collection('${BranchController.branchId}s')
           .doc(LectureController.lectureId)
           .collection(LectureController.lectureCollection)
           .snapshots(),
@@ -153,12 +189,16 @@ class MyController extends ChangeNotifier {
               } else {
                 studentsId.add(d.id);
                 studentsId = studentsId.toSet().toList();
-                sturentsRowData.addAll({'${d['roll']}': d['row'], '${d['roll']}status': d['status']});
+                sturentsRowData.addAll({
+                  '${d['roll']}': d['row'],
+                  '${d['roll']}status': d['status']
+                });
                 //
                 data.add({
                   'roll': d['roll'],
                   'name': d['name'],
                   'phone': d['phone'],
+                  'caterory': d['caterory'],
                   'row': d['row'],
                   'status': d['status'],
                 });
@@ -172,14 +212,23 @@ class MyController extends ChangeNotifier {
               } else {
                 studentsId.add(d.id);
                 studentsId = studentsId.toSet().toList();
-                sturentsRowData.addAll({'${d['roll']}': d['row'], '${d['roll']}status': d['status']});
+                sturentsRowData.addAll({
+                  '${d['roll']}': d['row'],
+                  '${d['roll']}status': d['status']
+                });
                 //
                 if (d['roll'].contains(searchingKey) ||
-                    d['name'].contains(searchingKey)) {
+                    d['name']
+                        .toLowerCase()
+                        .contains(searchingKey.toLowerCase()) ||
+                    d['caterory']
+                        .toLowerCase()
+                        .contains(searchingKey.toLowerCase())) {
                   data.add({
                     'roll': d['roll'],
                     'name': d['name'],
                     'phone': d['phone'],
+                    'caterory': d['caterory'],
                     'row': d['row'],
                     'status': d['status'],
                   });
@@ -203,9 +252,20 @@ class MyController extends ChangeNotifier {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Today: ${currentDate.toString()}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 17, color: Colors.white),),
                               Text(
-                                  "Lecture: ${LectureController.sheetName} (google sheet's name)", style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 17, color: Colors.white),),
+                                'Today: ${currentDate.toString()}',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 17,
+                                    color: Colors.white),
+                              ),
+                              Text(
+                                "Lecture: ${LectureController.sheetName} (google sheet's name)",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 17,
+                                    color: Colors.white),
+                              ),
                               TextField(
                                 onChanged: (value) => updateKey(value),
                                 decoration: const InputDecoration(
@@ -222,13 +282,32 @@ class MyController extends ChangeNotifier {
                                   ),
                                 ),
                               ),
+                              //----------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                              // TextField(
+                              //   onChanged: (value) => updateKey(value),
+                              //   decoration: const InputDecoration(
+                              //     hintText: 'Search student',
+                              //     prefixIcon: Icon(Icons.search,
+                              //         color: Colors.blueGrey),
+                              //     focusedBorder: UnderlineInputBorder(
+                              //       borderSide:
+                              //           BorderSide(color: Colors.blueGrey),
+                              //     ),
+                              //     enabledBorder: UnderlineInputBorder(
+                              //       borderSide:
+                              //           BorderSide(color: Colors.blueGrey),
+                              //     ),
+                              //   ),
+                              // ),
+                              //----------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                             ],
                           ),
                         ),
                         decoration: BoxDecoration(
                           boxShadow: [
                             BoxShadow(
-                              color: MyColor.buttonSplaceColor5.withOpacity(0.6),
+                              color:
+                                  MyColor.buttonSplaceColor5.withOpacity(0.6),
                               offset: const Offset(0, 0),
                               blurRadius: 5,
                               spreadRadius: 5,
@@ -268,7 +347,9 @@ class MyController extends ChangeNotifier {
   List<Map<String, dynamic>> mydata = [];
   getAllStudentsFromDB() async {
     var snapshots = _firestore
-        .collection('AttendanceP').doc(BranchController.branchId).collection('${BranchController.branchId}s')
+        .collection('AttendanceP')
+        .doc(BranchController.branchId)
+        .collection('${BranchController.branchId}s')
         .doc(LectureController.lectureId)
         .collection(LectureController.lectureCollection)
         .snapshots();
@@ -278,6 +359,7 @@ class MyController extends ChangeNotifier {
           'roll': data.data()['roll'],
           'name': data.data()['name'],
           'phone': data.data()['phone'],
+          'caterory': data.data()['caterory'],
           'row': data.data()['row'],
           'status': data.data()['status'],
         });
@@ -289,7 +371,9 @@ class MyController extends ChangeNotifier {
     List<String> ids = studentsId.toSet().toList();
     for (String studentid in ids) {
       _firestore
-          .collection('AttendanceP').doc(BranchController.branchId).collection('${BranchController.branchId}s')
+          .collection('AttendanceP')
+          .doc(BranchController.branchId)
+          .collection('${BranchController.branchId}s')
           .doc(LectureController.lectureId)
           .collection(LectureController.lectureCollection)
           .doc(studentid)
