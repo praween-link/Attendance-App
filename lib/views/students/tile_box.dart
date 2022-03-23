@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:gthqrscanner/constants/colors/mycolor.dart';
 import 'package:gthqrscanner/controller/branch_controller.dart';
 import 'package:gthqrscanner/controller/lecture_controller.dart';
-import 'package:gthqrscanner/project/attendance_model/controller/my_controller.dart';
-import 'package:gthqrscanner/project/colors/mycolor.dart';
-import 'package:gthqrscanner/project/google_sheets/attendance_sheets.dart';
+import 'package:gthqrscanner/controller/student_controller.dart';
+import 'package:gthqrscanner/services/google_sheets/attendance_sheets.dart';
 import 'package:provider/provider.dart';
 
-class TileCard extends StatelessWidget {
+class TileCard extends StatefulWidget {
   const TileCard({
     Key? key,
     required this.data,
@@ -22,8 +22,35 @@ class TileCard extends StatelessWidget {
   final int index;
 
   @override
+  State<TileCard> createState() => _TileCardState();
+}
+
+class _TileCardState extends State<TileCard> {
+  String t = '';
+  int ti = -1;
+  Map<String, int> rowsId = {};
+  void getRowId() {
+    var myController = Provider.of<MyController>(context);
+    ti = -5;
+    for (int i = 0; i < myController.tt.length; i++) {
+      // if (myController.tt[i]['roll'] == roll) {
+      // setState(() {
+        t = myController.tt[i]['roll'];
+        ti = i + 2;
+        rowsId.addAll({myController.tt[i]['roll']: i + 2});
+      // });
+      // }
+    }
+    // return ti;
+  }
+
+  @override
   Widget build(BuildContext context) {
     var myController = Provider.of<MyController>(context);
+    // var tti = getRowId('4918144');
+    // getRowId();
+    myController.addRowsId();
+    // return Center(child: Text(myController.rowsId.toString()));
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -67,19 +94,19 @@ class TileCard extends StatelessWidget {
                         LectureController.sheetName,
                         style: const TextStyle(fontWeight: FontWeight.w500),
                       ),
-                      Text('ID: ${data[index]['row'].toString()}'),
+                      // Removed Here ID
                       Text(
-                        'Branch & Year: ${data[index]['caterory']}',
+                        'Branch & Year: ${widget.data[widget.index]['caterory']}',
                         style: const TextStyle(
                             fontSize: 16.0, fontWeight: FontWeight.w400),
                       ),
                       Text(
-                        'Roll No: ${data[index]['roll']}',
+                        'Roll No: ${widget.data[widget.index]['roll']}',
                         style: const TextStyle(
                             fontSize: 16.0, fontWeight: FontWeight.w800),
                       ),
                       Text(
-                        'Name: ${data[index]['name']}',
+                        'Name: ${widget.data[widget.index]['name']}',
                         style: const TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.w500,
@@ -90,12 +117,15 @@ class TileCard extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        data[index]['status'] ? 'Persent' : 'Absent',
+                        widget.data[widget.index]['status']
+                            ? 'Persent'
+                            : 'Absent',
                         style: TextStyle(
                           fontSize: 14.0,
                           fontWeight: FontWeight.w400,
-                          color:
-                              data[index]['status'] ? Colors.green : Colors.red,
+                          color: widget.data[widget.index]['status']
+                              ? Colors.green
+                              : Colors.red,
                         ),
                       ),
                       const SizedBox(width: 5.0),
@@ -112,32 +142,39 @@ class TileCard extends StatelessWidget {
                   )
                 ],
               ),
-              // myController.attendanceProcess ? const CircularProgressIndicator() : 
+              // myController.attendanceProcess ? const CircularProgressIndicator() :
               FlutterSwitch(
-                value: data[index]['status'],
+                value: widget.data[widget.index]['status'],
                 onToggle: (value) async {
-                  // myController.updateAttendanceProcess(true);
-                  var rowIndex = await data[index]['row'];
+                  AttendanceSheetApi.getRows(context); //--
+                  var roll = await widget.data[widget.index]['roll'];
+                  int rid = myController.rowsId[roll] ?? -1;
                   final r = await AttendanceSheetApi.attendanceSheet!.cells
-                      .cell(column: 1, row: rowIndex);
+                      .cell(column: 1, row: rid);
+                  // var roll = await widget.data[widget.index]['roll'];
+                  // final r = await AttendanceSheetApi.attendanceSheet!.cells
+                  //     .cell(column: 1, row: getRowId(roll));//--===========================
 
-                  if (r.value == data[index]['roll']) {
-                  var rowindex = await data[index]['row'];
-                    await AttendanceSheetApi.attendanceSheet!.values
+                  if (r.value == widget.data[widget.index]['roll']) {
+                    // var rowindex = await widget.data[widget.index]['row'];
+                    await AttendanceSheetApi.attendanceSheet!
+                        .values //------------------- ATTENDANCE OF STUDENT ------------------------------------------------------------------
                         .insertValue(
-                            !data[index]['status'] ? 'Present' : 'Absent',
+                            !widget.data[widget.index]['status']
+                                ? 'Present'
+                                : 'Absent',
                             column: myController.lastColumn,
-                            row: rowindex);
+                            row: rid);
                   }
-                  await _firestore
+                  await widget._firestore
                       .collection('AttendanceP')
                       .doc(BranchController.branchId)
                       .collection('${BranchController.branchId}s')
                       .doc(LectureController.lectureId)
                       .collection(LectureController.lectureCollection)
-                      .doc(data[index]['roll'])
-                      .update({'status': !data[index]['status']});
-                  
+                      .doc(widget.data[widget.index]['roll'])
+                      .update({'status': !widget.data[widget.index]['status']});
+
                   // myController.updateAttendanceProcess(false);
                   // makeAttendance(data[index]['roll'],
                   //     !data[index]['status'], data[index]['row'], 5);

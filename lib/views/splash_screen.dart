@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
-import 'home/home_screen.dart';
+import 'branch_home_screen/home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({

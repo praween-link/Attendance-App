@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gthqrscanner/constants/colors/mycolor.dart';
 import 'package:gthqrscanner/controller/branch_controller.dart';
-import 'package:gthqrscanner/project/attendance_model/controller/my_controller.dart';
-import 'package:gthqrscanner/project/colors/mycolor.dart';
-import 'package:gthqrscanner/project/drawer.dart';
+import 'package:gthqrscanner/controller/student_controller.dart';
+import 'package:gthqrscanner/views/branch_home_screen/drawer.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {

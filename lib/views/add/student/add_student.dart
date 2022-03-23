@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:gthqrscanner/constants/colors/mycolor.dart';
 import 'package:gthqrscanner/controller/branch_controller.dart';
 import 'package:gthqrscanner/controller/lecture_controller.dart';
-import 'package:gthqrscanner/project/attendance_model/controller/my_controller.dart';
-import 'package:gthqrscanner/project/colors/mycolor.dart';
-import 'package:gthqrscanner/project/google_sheets/attendance_sheets.dart';
-import 'package:gthqrscanner/project/google_sheets/student.dart';
+import 'package:gthqrscanner/controller/student_controller.dart';
+import 'package:gthqrscanner/model/student.dart';
+import 'package:gthqrscanner/services/google_sheets/attendance_sheets.dart';
 import 'package:provider/provider.dart';
 
 class AddNewStudent extends StatefulWidget {
@@ -48,17 +48,17 @@ class _AddNewStudentState extends State<AddNewStudent> {
             onTap: () => Navigator.pop(context),
           ),
         ),
-        actions: [
-          Center(
-              child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              (myController.lastRow - 1).toString(),
-              style:
-                  const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-            ),
-          )),
-        ],
+        // actions: [
+          // Center(
+          //     child: Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: Text(
+          //     (myController.lastRow - 1).toString(),
+          //     style:
+          //         const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+          //   ),
+          // )),
+        // ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -154,21 +154,21 @@ class _AddNewStudentState extends State<AddNewStudent> {
                               Student.phone: phone,
                               Student.caterory: caterory,
                             };
-                            await AttendanceSheetApi.insertRow(
+                            var added = await AttendanceSheetApi.insertRow(
                                 [student], context);
-                            myController.addNewStudent(
+                            added ? myController.addNewStudent(
                                 roll: roll,
                                 name: name,
                                 phone: phone,
                                 caterory: caterory,
                                 date:
                                     '${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year} ${DateTime.now().hour}:${DateTime.now().minute}',
-                                row: myController.lastRow + 1,
-                                p: false);
-                            myController.lastRowNo(
-                                row: myController.lastRow + 1,
-                                col: myController.lastColumn);
-                            Navigator.pop(context);
+                                // row: myController.lastRow + 1,
+                                p: false) : null;
+                            added ? myController.lastRowNo(
+                                // row: myController.lastRow + 1,
+                                col: myController.lastColumn) : null;
+                            added ? Navigator.pop(context): null;
                           }
                         },
                         child: const Padding(
@@ -266,11 +266,11 @@ class _AddNewStudentState extends State<AddNewStudent> {
                                 caterory: d['caterory'],
                                 date:
                                     '${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year} ${DateTime.now().hour}:${DateTime.now().minute}',
-                                row: myController.lastRow + 1,
+                                // row: myController.lastRow + 1,
                                 p: false,
-                              );
+                              );//
                               await myController.lastRowNo(
-                                  row: myController.lastRow + 1,
+                                  // row: myController.lastRow + 1,
                                   col: myController.lastColumn);
                             }
                             myController.updateAddingProccess(true);

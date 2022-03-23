@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:gthqrscanner/project/colors/mycolor.dart';
-import 'package:gthqrscanner/project/home/lectures.dart';
+import 'package:gthqrscanner/constants/colors/mycolor.dart';
+import 'package:gthqrscanner/views/lecture_screen/lectures.dart';
 
 class BranchController extends ChangeNotifier {
   final _firebase = FirebaseFirestore.instance;
@@ -90,7 +90,7 @@ class BranchController extends ChangeNotifier {
                                   fontSize: 18.0,
                                   fontWeight: FontWeight.w500,
                                 ),
-                                textAlign: TextAlign.left,
+                                textAlign: TextAlign.center,
                               ),
                             ),
                             decoration: BoxDecoration(
@@ -111,7 +111,7 @@ class BranchController extends ChangeNotifier {
                       );
               });
         } else if (snapshot.hasError) {
-          return const Text('Something is wrong!');
+          return const Center(child: Text('Something is wrong!'));
         }
         return const Center(
           child: CircularProgressIndicator(),

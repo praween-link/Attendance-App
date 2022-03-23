@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:gthqrscanner/constants/colors/mycolor.dart';
 import 'package:gthqrscanner/controller/lecture_controller.dart';
-import 'package:gthqrscanner/project/colors/mycolor.dart';
 import 'package:provider/provider.dart';
 
-import '../add_lecture.dart';
+import '../add/lecture/add_lecture.dart';
 
 class Lectures extends StatelessWidget {
   const Lectures(

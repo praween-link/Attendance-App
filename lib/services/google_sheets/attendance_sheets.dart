@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:gsheets/gsheets.dart';
 import 'package:gthqrscanner/controller/branch_controller.dart';
 import 'package:gthqrscanner/controller/lecture_controller.dart';
-import 'package:gthqrscanner/project/attendance_model/controller/my_controller.dart';
-import 'package:gthqrscanner/project/google_sheets/student.dart';
+import 'package:gthqrscanner/controller/student_controller.dart';
+import 'package:gthqrscanner/model/student.dart';
 import 'package:provider/provider.dart';
 
 class AttendanceSheetApi {
@@ -70,9 +70,10 @@ class AttendanceSheetApi {
       List<Map<String, dynamic>> newRowList, BuildContext context) async {
     if (attendanceSheet == null) return;
     await attendanceSheet!.values.map.appendRows(newRowList);
-    await Provider.of<MyController>(context, listen: false)
-            .updateTest(await attendanceSheet!.values.row(3));////////////////////////////////////////////////////////////////////////////////////
-        // .updateTest(await attendanceSheet!.values.map.allRows());
+    // await Provider.of<MyController>(context, listen: false)
+    //         .updateTest(await attendanceSheet!.values.row(3));////////////////////////////////////////////////////////////////////////////////////
+    // .updateTest(await attendanceSheet!.values.map.allRows());
+    return true;
   }
 
   static Future insertDate(
@@ -102,5 +103,18 @@ class AttendanceSheetApi {
     if (studentSheet == null) return;
     Provider.of<MyController>(context, listen: false)
         .updateTest(await studentSheet!.values.map.allRows());
+  }
+
+  // Fetch all roll numbers
+  static Future getRows(BuildContext context) async {
+    // final spresdsheet =
+    //       await _gsheets.spreadsheet('199Oh8_o0xCSwfrTSy_1yHpQTloAfpBS9_PhD304gJa8');
+    // attendanceSheet =
+    //       await _getWorkSheet(spresdsheet, title: 'APTITUDE');
+
+    if (attendanceSheet == null) return;
+    // _attendanceSheet!.values.map.appendRows(newRowList);
+    Provider.of<MyController>(context, listen: false)
+        .gettestAllData(await attendanceSheet!.values.map.allRows());
   }
 }

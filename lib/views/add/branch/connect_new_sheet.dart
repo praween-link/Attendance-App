@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gthqrscanner/constants/colors/mycolor.dart';
 import 'package:gthqrscanner/controller/branch_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
-
-import 'colors/mycolor.dart';
 
 class ConnectNewSheet extends StatefulWidget {
   static const routeName = '/connectNewSheet';

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:gthqrscanner/project/add_lecture.dart';
-import 'package:gthqrscanner/project/attendance_model/add/add_student.dart';
-import 'package:gthqrscanner/project/attendance_model/students/view_all_students.dart';
-import 'package:gthqrscanner/project/connect_new_sheet.dart';
-import 'package:gthqrscanner/project/home/home_screen.dart';
-import 'package:gthqrscanner/project/splash_screen.dart';
 import 'package:gthqrscanner/src/sample_feature/sample_item_details_view.dart';
 import 'package:gthqrscanner/src/sample_feature/sample_item_list_view.dart';
 import 'package:gthqrscanner/src/settings/settings_controller.dart';
 import 'package:gthqrscanner/src/settings/settings_view.dart';
+import 'package:gthqrscanner/test.dart';
+import 'package:gthqrscanner/views/add/student/add_student.dart';
+import 'package:gthqrscanner/views/add/lecture/add_lecture.dart';
+import 'package:gthqrscanner/views/add/branch/connect_new_sheet.dart';
+import 'package:gthqrscanner/views/branch_home_screen/home_screen.dart';
+import 'package:gthqrscanner/views/splash_screen.dart';
+import 'package:gthqrscanner/views/students/view_all_students.dart';
 
 class Routes {
   MaterialPageRoute<void> myMaterialPageRoute(
@@ -35,6 +36,8 @@ class Routes {
             return const SplashScreen();
           case ConnectNewSheet.routeName:
             return const ConnectNewSheet();
+          case TestScreen.routeName:
+            return const TestScreen();
           default:
             return const HomeScreen();
         }

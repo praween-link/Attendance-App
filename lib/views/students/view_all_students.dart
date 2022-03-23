@@ -1,10 +1,9 @@
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gthqrscanner/project/attendance_model/add/add_student.dart';
-import 'package:gthqrscanner/project/attendance_model/controller/my_controller.dart';
-import 'package:gthqrscanner/project/colors/mycolor.dart';
-import 'package:gthqrscanner/project/google_sheets/attendance_sheets.dart';
+import 'package:gthqrscanner/constants/colors/mycolor.dart';
+import 'package:gthqrscanner/controller/student_controller.dart';
+import 'package:gthqrscanner/views/add/student/add_student.dart';
 import 'package:provider/provider.dart';
 
 class AllStudents extends StatefulWidget {
@@ -38,8 +37,10 @@ class _AllStudentsState extends State<AllStudents> {
             onPressed: () async {
               // final r = await AttendanceSheetApi.attendanceSheet!.cells
               //         .cell(column: 1, row: 1);
-              controller.addTodayDate(context: context,
-                  date: '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
+              controller.addTodayDate(
+                  context: context,
+                  date:
+                      '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
                   row: 1,
                   col: controller.lastColumn);
             },
@@ -75,7 +76,8 @@ class _AllStudentsState extends State<AllStudents> {
                       onTap: () async {
                         controller.addTodayDate(
                             context: context,
-                            date: '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
+                            date:
+                                '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
                             row: 1,
                             col: controller.lastColumn);
                         Navigator.pop(context);
@@ -97,6 +99,12 @@ class _AllStudentsState extends State<AllStudents> {
         ],
       ),
       body: controller.getAllStudents(),
+      // body: SingleChildScrollView(
+      //   child: Text(
+      //     controller.tt.toString(),
+      //   ),
+      // ),
+      // body: Center(child: Text(ti.toString())),
     );
   }
 

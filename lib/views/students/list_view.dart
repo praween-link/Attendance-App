@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:gthqrscanner/project/attendance_model/controller/my_controller.dart';
+import 'package:gthqrscanner/controller/student_controller.dart';
 import 'package:provider/provider.dart';
 
 class StudentListView extends StatelessWidget {
@@ -14,8 +14,7 @@ class StudentListView extends StatelessWidget {
       itemCount: data.length,
       itemBuilder: (BuildContext context, int index) {
         data[index].id == 'lastRowNo'
-            ? controller.updateCurrentLastRow(
-                data[index]['row'], data[index]['column'], data[index]['date'])
+            ? controller.updateCurrentLastRow(data[index]['column'], data[index]['date'])
             : print('');
         return data[index].id == 'lastRowNo' ? const Text('') : const Text('');
       },

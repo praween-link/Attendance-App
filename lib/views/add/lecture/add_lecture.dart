@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:gthqrscanner/constants/colors/mycolor.dart';
 import 'package:gthqrscanner/controller/branch_controller.dart';
 import 'package:gthqrscanner/controller/lecture_controller.dart';
+import 'package:gthqrscanner/services/google_sheets/attendance_sheets.dart';
 import 'package:provider/provider.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
-
-import 'colors/mycolor.dart';
-import 'google_sheets/attendance_sheets.dart';
 
 class AddNewLecture extends StatefulWidget {
   static const routeName = '/addNewLecture';

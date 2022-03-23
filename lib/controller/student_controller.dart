@@ -1,16 +1,21 @@
 // ignore_for_file: avoid_print
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:gthqrscanner/constants/colors/mycolor.dart';
 import 'package:gthqrscanner/controller/branch_controller.dart';
 import 'package:gthqrscanner/controller/lecture_controller.dart';
-import 'package:gthqrscanner/project/attendance_model/students/tile_box.dart';
-import 'package:gthqrscanner/project/colors/mycolor.dart';
-import 'package:gthqrscanner/project/google_sheets/attendance_sheets.dart';
+import 'package:gthqrscanner/services/google_sheets/attendance_sheets.dart';
+import 'package:gthqrscanner/views/students/tile_box.dart';
 
 class MyController extends ChangeNotifier {
+  dynamic tt = '';
+  void gettestAllData(dynamic td) {
+    tt = td;
+    notifyListeners();
+  }
   //--------------------------------------
-
   bool studentAdding = false;
   void updateAddingProccess(bool isAdding) {
     studentAdding = isAdding;
@@ -71,12 +76,14 @@ class MyController extends ChangeNotifier {
   String fwithP = 'true';
   String fwithA = 'false';
 
-  int lastRow = -1;
+  // int lastRow = -1;
   int lastColumn = -1;
   String currentDate = '';
 
-  void updateCurrentLastRow(int r, int c, String d) {
-    lastRow = r;
+  void updateCurrentLastRow(
+    // int r, 
+    int c, String d) {
+    // lastRow = r;
     lastColumn = c;
     currentDate = d;
     // notifyListeners();
@@ -88,7 +95,7 @@ class MyController extends ChangeNotifier {
       required String phone,
       required String caterory,
       required String date,
-      required int row,
+      // required int row,
       required bool p}) async {
     _firestore
         .collection('AttendanceP')
@@ -103,13 +110,28 @@ class MyController extends ChangeNotifier {
         'name': name,
         'phone': phone,
         'caterory': caterory,
-        'row': row,
+        // 'row': row,
         'status': p,
         'attendance': {}
       },
     ).then(
       (value) {},
     );
+    notifyListeners();
+  }
+
+  Future deleteStudentData({required String roll}) async {
+    _firestore
+        .collection('AttendanceP')
+        .doc(BranchController.branchId)
+        .collection('${BranchController.branchId}s')
+        .doc(LectureController.lectureId)
+        .collection(LectureController.lectureCollection)
+        .doc(roll)
+        .delete()
+        .then(
+          (value) {},
+        );
     notifyListeners();
   }
 
@@ -120,7 +142,8 @@ class MyController extends ChangeNotifier {
       required String date,
       required int row,
       required int col}) async {
-    final r = await AttendanceSheetApi.attendanceSheet!.values.value(column: col, row: 1);
+    final r = await AttendanceSheetApi.attendanceSheet!.values
+        .value(column: col, row: 1);
     // xx = '$col, $r, "d-$date"';
     if (r != "d-$date") {
       //
@@ -142,7 +165,7 @@ class MyController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future lastRowNo({required int row, required int col}) async {
+  Future lastRowNo({required int col}) async {
     _firestore
         .collection('AttendanceP')
         .doc(BranchController.branchId)
@@ -151,7 +174,7 @@ class MyController extends ChangeNotifier {
         .collection(LectureController.lectureCollection)
         .doc('lastRowNo')
         .update(
-      {'row': row, 'column': col},
+      {'column': col},
     ).then(
       (value) {},
     );
@@ -168,6 +191,27 @@ class MyController extends ChangeNotifier {
 
   ///
   ///
+  Map<String, int> rowsId = {};
+  // void activeForAttendance() {
+  //   active = true;
+  //   notifyListeners();
+  // }
+  void addRowsId() {
+    // rowsId = rowsId;
+    // var myController = Provider.of<MyController>(context);
+    // ti = -5;
+    for (int i = 0; i < tt.length; i++) {
+      // if (myController.tt[i]['roll'] == roll) {
+      // setState(() {
+        // t = myController.tt[i]['roll'];
+        // ti = i + 2;
+        rowsId.addAll({tt[i]['roll']: i + 2});
+      // });
+      // }
+    }
+    notifyListeners();
+  }
+
   ///
   getAllStudents() {
     return StreamBuilder<QuerySnapshot>(
@@ -185,12 +229,14 @@ class MyController extends ChangeNotifier {
           if (searchingKey == '') {
             for (var d in mydata) {
               if (d.id == 'lastRowNo') {
-                updateCurrentLastRow(d['row'], d['column'], d['date']);
+                updateCurrentLastRow(
+                  // d['row'], 
+                d['column'], d['date']);
               } else {
                 studentsId.add(d.id);
                 studentsId = studentsId.toSet().toList();
                 sturentsRowData.addAll({
-                  '${d['roll']}': d['row'],
+                  // '${d['roll']}': d['row'],
                   '${d['roll']}status': d['status']
                 });
                 //
@@ -199,7 +245,7 @@ class MyController extends ChangeNotifier {
                   'name': d['name'],
                   'phone': d['phone'],
                   'caterory': d['caterory'],
-                  'row': d['row'],
+                  // 'row': d['row'],
                   'status': d['status'],
                 });
                 data = data.toSet().toList();
@@ -208,12 +254,14 @@ class MyController extends ChangeNotifier {
           } else {
             for (var d in mydata) {
               if (d.id == 'lastRowNo') {
-                updateCurrentLastRow(d['row'], d['column'], d['date']);
+                updateCurrentLastRow(
+                  // d['row'], 
+                  d['column'], d['date']);
               } else {
                 studentsId.add(d.id);
                 studentsId = studentsId.toSet().toList();
                 sturentsRowData.addAll({
-                  '${d['roll']}': d['row'],
+                  // '${d['roll']}': d['row'],
                   '${d['roll']}status': d['status']
                 });
                 //
@@ -229,7 +277,7 @@ class MyController extends ChangeNotifier {
                     'name': d['name'],
                     'phone': d['phone'],
                     'caterory': d['caterory'],
-                    'row': d['row'],
+                    // 'row': d['row'],
                     'status': d['status'],
                   });
                   data = data.toSet().toList();
@@ -244,7 +292,7 @@ class MyController extends ChangeNotifier {
               return index == 0
                   ? Padding(
                       padding: const EdgeInsets.only(
-                          left: 10, top: 12, bottom: 8, right: 19),
+                          bottom: 8),
                       child: Container(
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -252,12 +300,32 @@ class MyController extends ChangeNotifier {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'Today: ${currentDate.toString()}',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 17,
-                                    color: Colors.white),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Today: ${currentDate.toString()}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 17,
+                                        color: Colors.white),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () async{
+                                      await AttendanceSheetApi.getRows(context); //--
+                                    },
+                                    child: Text(
+                                      rowsId.isNotEmpty ? 'Active' : 'Not active',
+                                      style: TextStyle(
+                                        color:
+                                            rowsId.isNotEmpty ? Colors.green : Colors.red,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                               Text(
                                 "Lecture: ${LectureController.sheetName} (google sheet's name)",
@@ -282,24 +350,6 @@ class MyController extends ChangeNotifier {
                                   ),
                                 ),
                               ),
-                              //----------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                              // TextField(
-                              //   onChanged: (value) => updateKey(value),
-                              //   decoration: const InputDecoration(
-                              //     hintText: 'Search student',
-                              //     prefixIcon: Icon(Icons.search,
-                              //         color: Colors.blueGrey),
-                              //     focusedBorder: UnderlineInputBorder(
-                              //       borderSide:
-                              //           BorderSide(color: Colors.blueGrey),
-                              //     ),
-                              //     enabledBorder: UnderlineInputBorder(
-                              //       borderSide:
-                              //           BorderSide(color: Colors.blueGrey),
-                              //     ),
-                              //   ),
-                              // ),
-                              //----------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                             ],
                           ),
                         ),
@@ -320,22 +370,65 @@ class MyController extends ChangeNotifier {
                             ),
                             BoxShadow(
                               color: MyColor.buttonColor.withOpacity(0.2),
-                              offset: const Offset(8, 8),
+                              offset: const Offset(0, 8),
                               blurRadius: 0,
                               spreadRadius: 5,
                             ),
                           ],
                           borderRadius:
-                              const BorderRadius.all(Radius.circular(5)),
+                            const BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5)),
                         ),
                       ),
                     )
-                  : TileCard(
-                      data: data, firestore: _firestore, index: index - 1);
+                  : GestureDetector(
+                      onLongPress: () {
+                        AwesomeDialog(
+                          context: context,
+                          animType: AnimType.SCALE,
+                          dialogType: DialogType.WARNING,
+                          body: Center(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Delete roll-${data[index - 1]['roll']}!',
+                                  style: const TextStyle(
+                                    color: Colors.orange,
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 8),
+                                const Text(
+                                  'Are you sure to delete student!',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+                          btnCancelOnPress: () {},
+                          btnCancelText: 'NO',
+                          btnOkOnPress: () {
+                            //validate
+                            deleteStudentData(roll: data[index - 1]['roll']);
+                            // Navigator.pop(context);
+                          },
+                          btnOkText: 'YES',
+                        ).show();
+                      },
+                      child: TileCard(
+                          data: data, firestore: _firestore, index: index - 1),
+                    );
             },
           );
         } else if (snapshot.hasError) {
-          return const Text('Something went wrong');
+          return const Center(child: Text('Something went wrong'));
         }
         return const Center(
           child: CircularProgressIndicator(),
@@ -360,7 +453,7 @@ class MyController extends ChangeNotifier {
           'name': data.data()['name'],
           'phone': data.data()['phone'],
           'caterory': data.data()['caterory'],
-          'row': data.data()['row'],
+          // 'row': data.data()['row'],
           'status': data.data()['status'],
         });
       }

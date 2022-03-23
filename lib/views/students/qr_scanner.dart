@@ -1,10 +1,9 @@
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gthqrscanner/constants/colors/mycolor.dart';
+import 'package:gthqrscanner/controller/student_controller.dart';
 import 'package:provider/provider.dart';
-
-import 'attendance_model/controller/my_controller.dart';
-import 'colors/mycolor.dart';
 
 class ScanQRCode extends StatefulWidget {
   const ScanQRCode({Key? key, required this.id}) : super(key: key);

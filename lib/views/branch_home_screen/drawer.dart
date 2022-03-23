@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gthqrscanner/project/connect_new_sheet.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'colors/mycolor.dart';
+import 'package:gthqrscanner/constants/colors/mycolor.dart';
+import 'package:gthqrscanner/test.dart';
+import '../add/branch/connect_new_sheet.dart';
 
 class MyDrawer extends StatefulWidget {
   const MyDrawer({
@@ -61,6 +61,18 @@ class _MyDrawerState extends State<MyDrawer> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => const ConnectNewSheet(),
+                          ),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.add_comment_rounded),
+                      title: const Text('Test'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const TestScreen(),
                           ),
                         );
                       },
