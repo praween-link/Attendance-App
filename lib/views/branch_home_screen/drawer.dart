@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gthqrscanner/constants/colors/mycolor.dart';
-import 'package:gthqrscanner/test.dart';
 import '../add/branch/connect_new_sheet.dart';
 
 class MyDrawer extends StatefulWidget {
@@ -15,18 +14,6 @@ class MyDrawer extends StatefulWidget {
 }
 
 class _MyDrawerState extends State<MyDrawer> {
-  // Future<void> _launchInBrawser(String url) async {
-  //   if (await canLaunch(url)) {
-  //     await launch(
-  //       url,
-  //       forceSafariVC: false,
-  //       forceWebView: false,
-  //       headers: <String, String>{'header_key': 'header_value0'},
-  //     );
-  //   } else {
-  //     throw 'Could not launch $url';
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -65,18 +52,6 @@ class _MyDrawerState extends State<MyDrawer> {
                         );
                       },
                     ),
-                    ListTile(
-                      leading: const Icon(Icons.add_comment_rounded),
-                      title: const Text('Test'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const TestScreen(),
-                          ),
-                        );
-                      },
-                    ),
                   ],
                 ),
                 Padding(
@@ -90,12 +65,12 @@ class _MyDrawerState extends State<MyDrawer> {
                         const Text(
                           'Created by',
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w400),
+                              fontSize: 12, fontWeight: FontWeight.w400),
                         ),
                         const Text(
                           'Geeta Technical Hub',
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w600),
+                              fontSize: 14, fontWeight: FontWeight.w800),
                         ),
                       ],
                     )),

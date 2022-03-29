@@ -15,6 +15,7 @@ class MyController extends ChangeNotifier {
     tt = td;
     notifyListeners();
   }
+
   //--------------------------------------
   bool studentAdding = false;
   void updateAddingProccess(bool isAdding) {
@@ -39,15 +40,18 @@ class MyController extends ChangeNotifier {
     availableInDB = studentsId.contains(scannedRollNo);
     //
     if (availableInDB) {
-      int rr = sturentsRowData[scannedRollNo] ?? -1;
+      // int rr = sturentsRowData[scannedRollNo] ?? -1;
+      int rid = rowsId[scannedRollNo] ?? -1;
+      // final r = await AttendanceSheetApi.attendanceSheet!.cells
+      //     .cell(column: 1, row: rr);
       final r = await AttendanceSheetApi.attendanceSheet!.cells
-          .cell(column: 1, row: rr);
+                      .cell(column: 1, row: rid);
 
       if (r.value == scannedRollNo) {
         await AttendanceSheetApi.attendanceSheet!.values
-            .insertValue('Present', column: lastColumn, row: rr);
+            .insertValue('Present', column: lastColumn, row: rid);
       }
-      _firestore
+      await _firestore
           .collection('AttendanceP')
           .doc(BranchController.branchId)
           .collection('${BranchController.branchId}s')
@@ -81,8 +85,9 @@ class MyController extends ChangeNotifier {
   String currentDate = '';
 
   void updateCurrentLastRow(
-    // int r, 
-    int c, String d) {
+      // int r,
+      int c,
+      String d) {
     // lastRow = r;
     lastColumn = c;
     currentDate = d;
@@ -134,8 +139,6 @@ class MyController extends ChangeNotifier {
         );
     notifyListeners();
   }
-
-  // String xx = 'xx';
 
   void addTodayDate(
       {required BuildContext context,
@@ -192,24 +195,11 @@ class MyController extends ChangeNotifier {
   ///
   ///
   Map<String, int> rowsId = {};
-  // void activeForAttendance() {
-  //   active = true;
-  //   notifyListeners();
-  // }
   void addRowsId() {
-    // rowsId = rowsId;
-    // var myController = Provider.of<MyController>(context);
-    // ti = -5;
     for (int i = 0; i < tt.length; i++) {
-      // if (myController.tt[i]['roll'] == roll) {
-      // setState(() {
-        // t = myController.tt[i]['roll'];
-        // ti = i + 2;
-        rowsId.addAll({tt[i]['roll']: i + 2});
-      // });
-      // }
+      rowsId.addAll({tt[i]['roll']: i + 2});
     }
-    notifyListeners();
+    // notifyListeners();
   }
 
   ///
@@ -230,8 +220,9 @@ class MyController extends ChangeNotifier {
             for (var d in mydata) {
               if (d.id == 'lastRowNo') {
                 updateCurrentLastRow(
-                  // d['row'], 
-                d['column'], d['date']);
+                    // d['row'],
+                    d['column'],
+                    d['date']);
               } else {
                 studentsId.add(d.id);
                 studentsId = studentsId.toSet().toList();
@@ -255,8 +246,9 @@ class MyController extends ChangeNotifier {
             for (var d in mydata) {
               if (d.id == 'lastRowNo') {
                 updateCurrentLastRow(
-                  // d['row'], 
-                  d['column'], d['date']);
+                    // d['row'],
+                    d['column'],
+                    d['date']);
               } else {
                 studentsId.add(d.id);
                 studentsId = studentsId.toSet().toList();
@@ -291,8 +283,7 @@ class MyController extends ChangeNotifier {
             itemBuilder: (BuildContext context, int index) {
               return index == 0
                   ? Padding(
-                      padding: const EdgeInsets.only(
-                          bottom: 8),
+                      padding: const EdgeInsets.only(bottom: 8),
                       child: Container(
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -308,33 +299,56 @@ class MyController extends ChangeNotifier {
                                     'Today: ${currentDate.toString()}',
                                     style: const TextStyle(
                                         fontWeight: FontWeight.w600,
-                                        fontSize: 17,
-                                        color: Colors.white),
+                                        fontSize: 15),
                                   ),
                                   GestureDetector(
-                                    onTap: () async{
-                                      await AttendanceSheetApi.getRows(context); //--
+                                    onTap: () async {
+                                      await AttendanceSheetApi.getRows(
+                                          context); //--
+                                      //
+                                      addTodayDate(
+                                          context: context,
+                                          date:
+                                              '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
+                                          row: 1,
+                                          col: lastColumn);
                                     },
-                                    child: Text(
-                                      rowsId.isNotEmpty ? 'Active' : 'Not active',
-                                      style: TextStyle(
-                                        color:
-                                            rowsId.isNotEmpty ? Colors.green : Colors.red,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w800,
+                                    child: Container(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 10.0,
+                                            right: 10.0,
+                                            top: 2.0,
+                                            bottom: 2.0),
+                                        child: Text(
+                                          rowsId.isNotEmpty
+                                              ? 'Active'
+                                              : 'Not active',
+                                          style: TextStyle(
+                                            color: rowsId.isNotEmpty
+                                                ? Colors.green
+                                                : Colors.red,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                        ),
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.5),
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(10.0)),
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
-                              Text(
+                              SelectableText(
                                 "Lecture: ${LectureController.sheetName} (google sheet's name)",
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 17,
-                                    color: Colors.white),
+                                    fontWeight: FontWeight.w600, fontSize: 15),
                               ),
-                              TextField(
+                              TextFormField(
+                                initialValue: searchingKey,
                                 onChanged: (value) => updateKey(value),
                                 decoration: const InputDecoration(
                                   hintText: 'Search student',
@@ -375,8 +389,9 @@ class MyController extends ChangeNotifier {
                               spreadRadius: 5,
                             ),
                           ],
-                          borderRadius:
-                            const BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5)),
+                          borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(5),
+                              bottomRight: Radius.circular(5)),
                         ),
                       ),
                     )

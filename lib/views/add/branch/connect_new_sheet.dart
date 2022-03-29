@@ -43,13 +43,18 @@ class _ConnectNewSheetState extends State<ConnectNewSheet> {
             key: _formKey,
             child: Column(
               children: [
-          const ListTile(title: Text('Email: attendance@custom-resource-341212.iam.gserviceaccount.com'),),
-          const SizedBox(height: 20.0),
+                const ListTile(
+                  title: SelectableText(
+                    'Email: attendance@custom-resource-341212.iam.gserviceaccount.com',
+                    style: TextStyle(fontSize: 15),
+                  ),
+                ),
+                const SizedBox(height: 20.0),
                 TextFormField(
                   onChanged: (value) => setState(() => key = value),
                   decoration: const InputDecoration(
                     hintText: 'Without any space and special chractors*',
-                    label: Text('Spread Sheet Key*'),
+                    label: Text('Unique Key*'),
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -81,6 +86,9 @@ class _ConnectNewSheetState extends State<ConnectNewSheet> {
                   validator: (value) {
                     if (value!.isEmpty) {
                       return 'Title cannot be empty!';
+                    }
+                    if (value.length > 28) {
+                      return 'Maximum charectors should be 28!';
                     }
                   },
                 ),
@@ -123,7 +131,7 @@ class _ConnectNewSheetState extends State<ConnectNewSheet> {
                         btnOkOnPress: () {
                           //validate
                           branchController.addNewSheet(
-                            key: key,
+                              key: key,
                               spreadSheetId: spreadSheetId,
                               spreadSheetTitle: spreadSheetTitle);
                           Navigator.pop(context);
@@ -141,7 +149,7 @@ class _ConnectNewSheetState extends State<ConnectNewSheet> {
                   ),
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all<Color>(MyColor.buttonColor),
+                        MaterialStateProperty.all<Color>(MyColor.appBarColor),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18.0),

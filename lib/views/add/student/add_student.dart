@@ -73,8 +73,8 @@ class _AddNewStudentState extends State<AddNewStudent> {
                       Text(
                         LectureController.sheetName,
                         style: const TextStyle(
-                          fontSize: 22.0,
-                          fontWeight: FontWeight.w900,
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w800,
                           letterSpacing: 1.2,
                         ),
                       ), //
@@ -240,7 +240,7 @@ class _AddNewStudentState extends State<AddNewStudent> {
                       const SizedBox(height: 25),
                       const Text('1. roll, 2. name, 3. phone, 4. caterory'),
                       const SizedBox(height: 25),
-                      ElevatedButton(
+                      myController.studentAdding ? const SizedBox() : ElevatedButton(
                         onPressed: () async {
                           if (!myController.studentAdding && _formKey2.currentState!.validate()) {
                             myController.updateAddingProccess(true);
@@ -273,7 +273,7 @@ class _AddNewStudentState extends State<AddNewStudent> {
                                   // row: myController.lastRow + 1,
                                   col: myController.lastColumn);
                             }
-                            myController.updateAddingProccess(true);
+                            myController.updateAddingProccess(false);
                             Navigator.pop(context);
                           }
                         },
@@ -286,7 +286,7 @@ class _AddNewStudentState extends State<AddNewStudent> {
                         ),
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
-                              myController.studentAdding ? MyColor.appBarColor.withOpacity(0.4) : MyColor.appBarColor),
+                              myController.studentAdding ? MyColor.appBarColor.withOpacity(0.5) : MyColor.appBarColor),
                           shape:
                               MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
@@ -296,7 +296,7 @@ class _AddNewStudentState extends State<AddNewStudent> {
                         ),
                       ),
                       myController.studentAdding
-                          ? const CircularProgressIndicator()
+                          ? CircularProgressIndicator(color: MyColor.appBarColor,)
                           : const Text(''),
                     ],
                   ),

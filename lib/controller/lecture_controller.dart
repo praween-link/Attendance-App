@@ -4,10 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:gthqrscanner/constants/colors/mycolor.dart';
 import 'package:gthqrscanner/services/google_sheets/attendance_sheets.dart';
 import 'package:gthqrscanner/views/students/view_all_students.dart';
+import 'package:provider/provider.dart';
 
 import 'branch_controller.dart';
+import 'student_controller.dart';
 
 class LectureController extends ChangeNotifier {
+  String searchingKey = '';
+  void updateKey(String key) {
+    searchingKey = key;
+    notifyListeners();
+  }
+
+  //
   final _firebase = FirebaseFirestore.instance;
 
   static String lectureId = '';
@@ -84,8 +93,20 @@ class LectureController extends ChangeNotifier {
           .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasData) {
-          var data = snapshot.data!.docs;
+          var listData = snapshot.data!.docs;
+          var data = [];
+          if (searchingKey == '') {
+            data.addAll(listData);
+          } else {
+            for (var d in listData) {
+              if (d['caterory'].contains(searchingKey)) {
+                data.add(d);
+              }
+            }
+          }
+          // data.addAll(listData);
           return ListView.builder(
+              physics: const BouncingScrollPhysics(),
               itemCount: data.length + 1,
               itemBuilder: (context, int index) {
                 return index == 0
@@ -100,33 +121,33 @@ class LectureController extends ChangeNotifier {
                                   const BorderRadius.all(Radius.circular(10.0)),
                             ),
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 10),
                           Text(
                             'Geeta Technical Hub', //Attendance App
                             style: TextStyle(
                               color: MyColor.textcolor5,
-                              fontSize: 22.0,
+                              fontSize: 20.0,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 1.2,
                             ),
                           ),
                           Text(
-                            'Attendance App',
+                            'ATTENDANCE',
                             style: TextStyle(
                               color: MyColor.textcolor5,
-                              fontSize: 21.0,
+                              fontSize: 12.0,
                               fontWeight: FontWeight.w500,
                               letterSpacing: 1.2,
                             ),
                           ),
-                          const SizedBox(height: 30),
+                          const SizedBox(height: 10),
                           Container(
                             child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(6.0),
                               child: Text(
                                 BranchController.spreadSheetTitle,
                                 style: const TextStyle(
-                                  fontSize: 18.0,
+                                  fontSize: 14.0,
                                   fontWeight: FontWeight.w400,
                                   letterSpacing: 1,
                                 ),
@@ -172,8 +193,7 @@ class LectureController extends ChangeNotifier {
                                   ),
                                   ListTile(
                                     title: const Text('Delete Lecture'),
-                                    trailing:
-                                        const Icon(Icons.date_range_rounded),
+                                    trailing: const Icon(Icons.delete),
                                     onTap: () async {
                                       AwesomeDialog(
                                         context: context,

@@ -44,21 +44,21 @@ class BranchController extends ChangeNotifier {
                                   const BorderRadius.all(Radius.circular(10.0)),
                             ),
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 10),
                           Text(
                             'Geeta Technical Hub', //Attendance App
                             style: TextStyle(
                               color: MyColor.textcolor5,
-                              fontSize: 22.0,
+                              fontSize: 20.0,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 1.2,
                             ),
                           ),
                           Text(
-                            'Attendance App',
+                            'ATTENDANCE',
                             style: TextStyle(
                               color: MyColor.textcolor5,
-                              fontSize: 21.0,
+                              fontSize: 12.0,
                               fontWeight: FontWeight.w500,
                               letterSpacing: 1.2,
                             ),

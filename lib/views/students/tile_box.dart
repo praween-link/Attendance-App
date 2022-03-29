@@ -33,24 +33,16 @@ class _TileCardState extends State<TileCard> {
     var myController = Provider.of<MyController>(context);
     ti = -5;
     for (int i = 0; i < myController.tt.length; i++) {
-      // if (myController.tt[i]['roll'] == roll) {
-      // setState(() {
         t = myController.tt[i]['roll'];
         ti = i + 2;
         rowsId.addAll({myController.tt[i]['roll']: i + 2});
-      // });
-      // }
     }
-    // return ti;
   }
 
   @override
   Widget build(BuildContext context) {
     var myController = Provider.of<MyController>(context);
-    // var tti = getRowId('4918144');
-    // getRowId();
     myController.addRowsId();
-    // return Center(child: Text(myController.rowsId.toString()));
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -74,12 +66,8 @@ class _TileCardState extends State<TileCard> {
             Radius.circular(5.0),
           ),
         ),
-        // width: w,
-        // height: 80,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          // child:
-          //     Text(data.toString()),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -94,7 +82,6 @@ class _TileCardState extends State<TileCard> {
                         LectureController.sheetName,
                         style: const TextStyle(fontWeight: FontWeight.w500),
                       ),
-                      // Removed Here ID
                       Text(
                         'Branch & Year: ${widget.data[widget.index]['caterory']}',
                         style: const TextStyle(
@@ -136,13 +123,10 @@ class _TileCardState extends State<TileCard> {
                             fontSize: 18.0,
                             fontWeight: FontWeight.w800),
                       ),
-                      // )
-                      // ),
                     ],
                   )
                 ],
               ),
-              // myController.attendanceProcess ? const CircularProgressIndicator() :
               FlutterSwitch(
                 value: widget.data[widget.index]['status'],
                 onToggle: (value) async {
@@ -151,12 +135,7 @@ class _TileCardState extends State<TileCard> {
                   int rid = myController.rowsId[roll] ?? -1;
                   final r = await AttendanceSheetApi.attendanceSheet!.cells
                       .cell(column: 1, row: rid);
-                  // var roll = await widget.data[widget.index]['roll'];
-                  // final r = await AttendanceSheetApi.attendanceSheet!.cells
-                  //     .cell(column: 1, row: getRowId(roll));//--===========================
-
                   if (r.value == widget.data[widget.index]['roll']) {
-                    // var rowindex = await widget.data[widget.index]['row'];
                     await AttendanceSheetApi.attendanceSheet!
                         .values //------------------- ATTENDANCE OF STUDENT ------------------------------------------------------------------
                         .insertValue(
@@ -174,10 +153,6 @@ class _TileCardState extends State<TileCard> {
                       .collection(LectureController.lectureCollection)
                       .doc(widget.data[widget.index]['roll'])
                       .update({'status': !widget.data[widget.index]['status']});
-
-                  // myController.updateAttendanceProcess(false);
-                  // makeAttendance(data[index]['roll'],
-                  //     !data[index]['status'], data[index]['row'], 5);
                 },
                 activeColor: Colors.green,
                 inactiveColor: Colors.red,

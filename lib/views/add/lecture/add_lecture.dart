@@ -78,6 +78,9 @@ class _AddNewLectureState extends State<AddNewLecture> {
                     if (value!.isEmpty) {
                       return 'Title cannot be empty!';
                     }
+                    if(value.length > 28){
+                      return 'Maximum charectors should be 28!';
+                    }
                   },
                 ),
                 const SizedBox(height: 5.0),
@@ -190,7 +193,7 @@ class _AddNewLectureState extends State<AddNewLecture> {
                   ),
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all<Color>(MyColor.buttonColor),
+                        MaterialStateProperty.all<Color>(MyColor.appBarColor),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18.0),

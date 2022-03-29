@@ -16,6 +16,13 @@ class AllStudents extends StatefulWidget {
 
 class _AllStudentsState extends State<AllStudents> {
   String scanningError = '';
+  // @override
+  // void initState() {
+  //   super.initState(); //updateKey
+  //   var controller = Provider.of<MyController>(context);
+  //   controller.updateKey('');
+  // }
+
   @override
   Widget build(BuildContext context) {
     var controller = Provider.of<MyController>(context);
@@ -25,12 +32,14 @@ class _AllStudentsState extends State<AllStudents> {
         title: const Text('Students'),
         leading: Builder(
           builder: (BuildContext context) => GestureDetector(
-            child: const Icon(
-              Icons.chevron_left_sharp,
-              size: 32,
-            ),
-            onTap: () => Navigator.pop(context),
-          ),
+              child: const Icon(
+                Icons.chevron_left_sharp,
+                size: 32,
+              ),
+              onTap: () {
+                controller.updateKey('');
+                Navigator.pop(context);
+              }),
         ),
         actions: [
           IconButton(
