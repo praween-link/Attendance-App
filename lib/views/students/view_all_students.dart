@@ -2,6 +2,7 @@ import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gthqrscanner/constants/colors/mycolor.dart';
+import 'package:gthqrscanner/controller/branch_controller.dart';
 import 'package:gthqrscanner/controller/student_controller.dart';
 import 'package:gthqrscanner/views/add/student/add_student.dart';
 import 'package:provider/provider.dart';
@@ -42,6 +43,9 @@ class _AllStudentsState extends State<AllStudents> {
               }),
         ),
         actions: [
+          Text(BranchController.allLecutres.length.toString()),
+          Text(
+              "${controller.lastColumn.toString()}-${controller.lastColumn.toString()}"),
           IconButton(
             onPressed: () async {
               // final r = await AttendanceSheetApi.attendanceSheet!.cells
@@ -51,7 +55,7 @@ class _AllStudentsState extends State<AllStudents> {
                   date:
                       '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
                   row: 1,
-                  col: controller.lastColumn);
+                  col: controller.lastColumn, firstC: controller.firstColumn, secondC: controller.secondColumn);
             },
             icon: const Icon(Icons.date_range_rounded),
           ),
@@ -88,7 +92,7 @@ class _AllStudentsState extends State<AllStudents> {
                             date:
                                 '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
                             row: 1,
-                            col: controller.lastColumn);
+                            col: controller.lastColumn, firstC: controller.firstColumn, secondC: controller.secondColumn);
                         Navigator.pop(context);
                       },
                     ),

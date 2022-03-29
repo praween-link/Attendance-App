@@ -18,8 +18,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     var controller = Provider.of<MyController>(context);
-    var branchController =
-        Provider.of<BranchController>(context);
+    var branchController = Provider.of<BranchController>(context);
+    // List<String> l = ['Hello1', 'Hello2', 'Hello3'];
     return Scaffold(
       appBar: AppBar(
         // leading: Icon(Icons.menu),
@@ -33,7 +33,6 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('GTH Attendance App'),
       ),
       body: branchController.getAllBranchFromDB(),
-      
       drawer: MyDrawer(data: controller.allStudents),
     );
   }

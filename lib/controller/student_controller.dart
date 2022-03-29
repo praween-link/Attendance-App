@@ -9,7 +9,16 @@ import 'package:gthqrscanner/controller/lecture_controller.dart';
 import 'package:gthqrscanner/services/google_sheets/attendance_sheets.dart';
 import 'package:gthqrscanner/views/students/tile_box.dart';
 
+import 'my_bottom_sheet.dart';
+
 class MyController extends ChangeNotifier {
+  //
+  String selectedLecture = '';
+  void seletedLectureUpdate(String s) {
+    selectedLecture = s;
+    notifyListeners();
+  }
+
   dynamic tt = '';
   void gettestAllData(dynamic td) {
     tt = td;
@@ -45,7 +54,7 @@ class MyController extends ChangeNotifier {
       // final r = await AttendanceSheetApi.attendanceSheet!.cells
       //     .cell(column: 1, row: rr);
       final r = await AttendanceSheetApi.attendanceSheet!.cells
-                      .cell(column: 1, row: rid);
+          .cell(column: 1, row: rid);
 
       if (r.value == scannedRollNo) {
         await AttendanceSheetApi.attendanceSheet!.values
@@ -81,6 +90,13 @@ class MyController extends ChangeNotifier {
   String fwithA = 'false';
 
   // int lastRow = -1;
+  int firstColumn = -1;
+  int secondColumn = -1;
+  void currentColumnUpdate(int fc, int sc) {
+    firstColumn = fc;
+    secondColumn = sc;
+  }
+
   int lastColumn = -1;
   String currentDate = '';
 
@@ -144,14 +160,16 @@ class MyController extends ChangeNotifier {
       {required BuildContext context,
       required String date,
       required int row,
-      required int col}) async {
+      required int col, required int firstC, required int secondC}) async {
     final r = await AttendanceSheetApi.attendanceSheet!.values
         .value(column: col, row: 1);
     // xx = '$col, $r, "d-$date"';
     if (r != "d-$date") {
       //
-      AttendanceSheetApi.insertDate(context, "d-$date", row, col + 1);
+      await AttendanceSheetApi.insertDate(context, "d-$date", row,
+          col + BranchController.allLecutres.length + 1);
       //
+
       _firestore
           .collection('AttendanceP')
           .doc(BranchController.branchId)
@@ -160,10 +178,25 @@ class MyController extends ChangeNotifier {
           .collection(LectureController.lectureCollection)
           .doc('lastRowNo')
           .update(
-        {'date': date, 'column': col + 1},
+        {
+          'date': date,
+          'column': col + BranchController.allLecutres.length + 1,
+          'lastcolumn': col
+        },
+        //
       ).then(
         (value) {},
       );
+      //
+      //-------------------------------//
+      for (int i = 0; i < BranchController.allLecutres.length; i++) {
+        await AttendanceSheetApi.insertDate(
+            context,
+            "${BranchController.allLecutres[i]}-$date",
+            row,
+            secondC + i + 1);
+      }
+      //-------------------------------//
     }
     notifyListeners();
   }
@@ -202,6 +235,25 @@ class MyController extends ChangeNotifier {
     // notifyListeners();
   }
 
+  //--0000
+  String gg = '';
+  void ggg(String g) {
+    gg = g;
+    notifyListeners();
+  }
+
+  //
+  // Initial Selected Value
+  String dropdownvalue = 'Item 1';
+
+  void selectedDropDownLecture(String selected) {
+    dropdownvalue = selected;
+    notifyListeners();
+  }
+
+  // List of items in our dropdown menu
+  List<String> items = [];
+
   ///
   getAllStudents() {
     return StreamBuilder<QuerySnapshot>(
@@ -223,6 +275,8 @@ class MyController extends ChangeNotifier {
                     // d['row'],
                     d['column'],
                     d['date']);
+
+                currentColumnUpdate(d['lastcolumn'], d['column']);
               } else {
                 studentsId.add(d.id);
                 studentsId = studentsId.toSet().toList();
@@ -238,6 +292,7 @@ class MyController extends ChangeNotifier {
                   'caterory': d['caterory'],
                   // 'row': d['row'],
                   'status': d['status'],
+                  'attendance': d['attendance'],
                 });
                 data = data.toSet().toList();
               }
@@ -249,6 +304,7 @@ class MyController extends ChangeNotifier {
                     // d['row'],
                     d['column'],
                     d['date']);
+                currentColumnUpdate(d['lastcolumn'], d['column']);
               } else {
                 studentsId.add(d.id);
                 studentsId = studentsId.toSet().toList();
@@ -271,6 +327,7 @@ class MyController extends ChangeNotifier {
                     'caterory': d['caterory'],
                     // 'row': d['row'],
                     'status': d['status'],
+                    'attendance': d['attendance'],
                   });
                   data = data.toSet().toList();
                 }
@@ -281,6 +338,9 @@ class MyController extends ChangeNotifier {
           return ListView.builder(
             itemCount: data.length + 1,
             itemBuilder: (BuildContext context, int index) {
+              // for (String s in BranchController.allLecutres) {
+              //   items.add(s);
+              // }
               return index == 0
                   ? Padding(
                       padding: const EdgeInsets.only(bottom: 8),
@@ -311,7 +371,7 @@ class MyController extends ChangeNotifier {
                                           date:
                                               '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
                                           row: 1,
-                                          col: lastColumn);
+                                          col: lastColumn, firstC: firstColumn, secondC: secondColumn);
                                     },
                                     child: Container(
                                       child: Padding(
@@ -347,6 +407,25 @@ class MyController extends ChangeNotifier {
                                 style: const TextStyle(
                                     fontWeight: FontWeight.w600, fontSize: 15),
                               ),
+                              //=======================
+                              GestureDetector(
+                                child: Text(
+                                  '${selectedLecture == '' ? "Select Lecture" : "Selected Lecture - "} $selectedLecture',
+                                  style: const TextStyle(
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                                onTap: () {
+                                  showModalBottomSheet<void>(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return const MyBottomSheet();
+                                    },
+                                  );
+                                },
+                              ),
+                              ////==============================
+                              Text(BranchController.allLecutres.toString()),
                               TextFormField(
                                 initialValue: searchingKey,
                                 onChanged: (value) => updateKey(value),
@@ -470,6 +549,7 @@ class MyController extends ChangeNotifier {
           'caterory': data.data()['caterory'],
           // 'row': data.data()['row'],
           'status': data.data()['status'],
+          'attendance': data.data()['attendance'],
         });
       }
     }
@@ -486,7 +566,7 @@ class MyController extends ChangeNotifier {
           .collection(LectureController.lectureCollection)
           .doc(studentid)
           .update(
-        {'status': false},
+        {'attendance.$selectedLecture': false},
       ).then(
         (value) => print(''),
       );

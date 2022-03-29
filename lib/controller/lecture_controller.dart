@@ -4,10 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:gthqrscanner/constants/colors/mycolor.dart';
 import 'package:gthqrscanner/services/google_sheets/attendance_sheets.dart';
 import 'package:gthqrscanner/views/students/view_all_students.dart';
-import 'package:provider/provider.dart';
 
 import 'branch_controller.dart';
-import 'student_controller.dart';
 
 class LectureController extends ChangeNotifier {
   String searchingKey = '';

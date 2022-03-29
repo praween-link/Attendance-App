@@ -7,6 +7,13 @@ class BranchController extends ChangeNotifier {
   final _firebase = FirebaseFirestore.instance;
   static String spreadSheetId = '';
   static String spreadSheetTitle = '';
+  static List<String> allLecutres = [];
+  // static String selectedLecture = '';
+  // void updateSelectedLecture(String s) {
+  //   selectedLecture = s;
+  //   notifyListeners();
+  // }
+
   //
   static String branchId = '';
   //---------
@@ -18,8 +25,27 @@ class BranchController extends ChangeNotifier {
     _firebase.collection('AttendanceP').doc(key).set({
       'spreadSheetId': spreadSheetId,
       'title': spreadSheetTitle,
+      'lectures': [],
     }).then((value) => print(''));
   }
+
+  void addLecture(String key, String lecture) {
+    _firebase.collection('AttendanceP').doc(key).update({
+      'lectures': FieldValue.arrayUnion([lecture]),
+    }).then((value) => print(''));
+  }
+
+  void deleteLecture(String key, List lectures) {
+    _firebase.collection('AttendanceP').doc(key).update({
+      'lectures': lectures,
+    }).then((value) => print(''));
+  }
+
+  // void deleteLecture(String key) {
+  //   _firebase.collection('AttendanceP').doc(key).delete().then(
+  //         (value) => print(''),
+  //       );
+  // }
 
   //
   //
@@ -32,6 +58,9 @@ class BranchController extends ChangeNotifier {
           return ListView.builder(
               itemCount: data.length + 1,
               itemBuilder: (context, int index) {
+                if (index != 0) {
+                  allLecutres = data[index - 1]['lectures'].cast<String>();
+                }
                 return index == 0
                     ? Column(
                         children: [

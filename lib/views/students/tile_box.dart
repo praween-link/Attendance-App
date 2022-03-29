@@ -33,9 +33,9 @@ class _TileCardState extends State<TileCard> {
     var myController = Provider.of<MyController>(context);
     ti = -5;
     for (int i = 0; i < myController.tt.length; i++) {
-        t = myController.tt[i]['roll'];
-        ti = i + 2;
-        rowsId.addAll({myController.tt[i]['roll']: i + 2});
+      t = myController.tt[i]['roll'];
+      ti = i + 2;
+      rowsId.addAll({myController.tt[i]['roll']: i + 2});
     }
   }
 
@@ -78,6 +78,9 @@ class _TileCardState extends State<TileCard> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text(widget.data[widget.index]['soft skills'] == null
+                          ? "Null"
+                          : widget.data[widget.index]['soft skills']),
                       Text(
                         LectureController.sheetName,
                         style: const TextStyle(fontWeight: FontWeight.w500),
@@ -103,14 +106,20 @@ class _TileCardState extends State<TileCard> {
                   ),
                   Row(
                     children: [
+                      Text(myController.firstColumn.toString()),
+                      Text(myController.secondColumn.toString()),
                       Text(
-                        widget.data[widget.index]['status']
+                        widget.data[widget.index]['attendance']
+                                    [myController.selectedLecture] ??
+                                false
                             ? 'Persent'
                             : 'Absent',
                         style: TextStyle(
                           fontSize: 14.0,
                           fontWeight: FontWeight.w400,
-                          color: widget.data[widget.index]['status']
+                          color: widget.data[widget.index]['attendance']
+                                      [myController.selectedLecture] ??
+                                  false
                               ? Colors.green
                               : Colors.red,
                         ),
@@ -123,36 +132,74 @@ class _TileCardState extends State<TileCard> {
                             fontSize: 18.0,
                             fontWeight: FontWeight.w800),
                       ),
+                      Text(widget.data[widget.index]['attendance']
+                                  [myController.selectedLecture] ==
+                              null
+                          ? "null"
+                          : widget.data[widget.index]['attendance']
+                                  [myController.selectedLecture]
+                              .toString()),
                     ],
                   )
                 ],
               ),
               FlutterSwitch(
-                value: widget.data[widget.index]['status'],
+                value: widget.data[widget.index]['attendance']
+                        [myController.selectedLecture] ??
+                    false,
                 onToggle: (value) async {
-                  AttendanceSheetApi.getRows(context); //--
-                  var roll = await widget.data[widget.index]['roll'];
-                  int rid = myController.rowsId[roll] ?? -1;
-                  final r = await AttendanceSheetApi.attendanceSheet!.cells
-                      .cell(column: 1, row: rid);
-                  if (r.value == widget.data[widget.index]['roll']) {
-                    await AttendanceSheetApi.attendanceSheet!
-                        .values //------------------- ATTENDANCE OF STUDENT ------------------------------------------------------------------
-                        .insertValue(
-                            !widget.data[widget.index]['status']
-                                ? 'Present'
-                                : 'Absent',
-                            column: myController.lastColumn,
-                            row: rid);
+                  if (myController.selectedLecture != '') {
+                    AttendanceSheetApi.getRows(context); //--
+                    //---------------Column Number----------------
+                    //-------------------------------//
+                    // int findedColumnNo = -1;
+                    // for (int i = 0;
+                    //     i < BranchController.allLecutres.length;
+                    //     i++) {
+                    //   // await AttendanceSheetApi.insertDate(
+                    //   //     context,
+                    //   //     "${BranchController.allLecutres[i]}-$date",
+                    //   //     row,
+                    //   //     secondC + i + 1);
+                    //   if("${BranchController.allLecutres[i]}-$date" == ){
+
+                    //   }
+                    // }
+                    //-------------------------------//
+                    //--------------------------------------------
+                    var roll = await widget.data[widget.index]['roll'];
+                    int rid = myController.rowsId[roll] ?? -1;
+                    final r = await AttendanceSheetApi.attendanceSheet!.cells
+                        .cell(column: 1, row: rid);
+                    if (r.value == widget.data[widget.index]['roll']) {
+                      await AttendanceSheetApi.attendanceSheet!
+                          .values //------------------- ATTENDANCE OF STUDENT ------------------------------------------------------------------
+                          .insertValue(
+                              !widget.data[widget.index]['status']
+                                  ? 'Present'
+                                  : 'Absent',
+                              column: myController.lastColumn,
+                              row: rid);
+                    }
+                    await widget._firestore
+                        .collection('AttendanceP')
+                        .doc(BranchController.branchId)
+                        .collection('${BranchController.branchId}s')
+                        .doc(LectureController.lectureId)
+                        .collection(LectureController.lectureCollection)
+                        .doc(widget.data[widget.index]['roll'])
+                        // .update({'status': ! widget.data[widget.index]['status']});
+                        .update({
+                      'attendance.${myController.selectedLecture}':
+                          // false
+                          widget.data[widget.index]['attendance']
+                                      [myController.selectedLecture] ==
+                                  null
+                              ? false
+                              : !widget.data[widget.index]['attendance']
+                                  [myController.selectedLecture]
+                    });
                   }
-                  await widget._firestore
-                      .collection('AttendanceP')
-                      .doc(BranchController.branchId)
-                      .collection('${BranchController.branchId}s')
-                      .doc(LectureController.lectureId)
-                      .collection(LectureController.lectureCollection)
-                      .doc(widget.data[widget.index]['roll'])
-                      .update({'status': !widget.data[widget.index]['status']});
                 },
                 activeColor: Colors.green,
                 inactiveColor: Colors.red,
