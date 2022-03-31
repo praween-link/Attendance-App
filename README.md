@@ -1,4 +1,4 @@
-# gthqrscanner
+# GTH Attendance Flutter Project
 
 A new Flutter project.
 
