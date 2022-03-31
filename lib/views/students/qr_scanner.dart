@@ -41,7 +41,9 @@ class _ScanQRCodeState extends State<ScanQRCode> {
     try {
       await BarcodeScanner.scan().then(
         (value) async {
-          controller.changeQRResult(result: value.rawContent.toString());
+          if(controller.selectedLecture != ''){
+            controller.changeQRResult(result: value.rawContent.toString());
+          }
         },
       );
     } on PlatformException catch (error) {

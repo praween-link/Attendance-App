@@ -49,15 +49,15 @@ class _AddNewStudentState extends State<AddNewStudent> {
           ),
         ),
         // actions: [
-          // Center(
-          //     child: Padding(
-          //   padding: const EdgeInsets.all(8.0),
-          //   child: Text(
-          //     (myController.lastRow - 1).toString(),
-          //     style:
-          //         const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-          //   ),
-          // )),
+        // Center(
+        //     child: Padding(
+        //   padding: const EdgeInsets.all(8.0),
+        //   child: Text(
+        //     (myController.lastRow - 1).toString(),
+        //     style:
+        //         const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+        //   ),
+        // )),
         // ],
       ),
       body: SingleChildScrollView(
@@ -156,19 +156,23 @@ class _AddNewStudentState extends State<AddNewStudent> {
                             };
                             var added = await AttendanceSheetApi.insertRow(
                                 [student], context);
-                            added ? myController.addNewStudent(
-                                roll: roll,
-                                name: name,
-                                phone: phone,
-                                caterory: caterory,
-                                date:
-                                    '${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year} ${DateTime.now().hour}:${DateTime.now().minute}',
-                                // row: myController.lastRow + 1,
-                                p: false) : null;
-                            added ? myController.lastRowNo(
-                                // row: myController.lastRow + 1,
-                                col: myController.lastColumn) : null;
-                            added ? Navigator.pop(context): null;
+                            added
+                                ? myController.addNewStudent(
+                                    roll: roll,
+                                    name: name,
+                                    phone: phone,
+                                    caterory: caterory,
+                                    date:
+                                        '${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year} ${DateTime.now().hour}:${DateTime.now().minute}',
+                                    // row: myController.lastRow + 1,
+                                    p: false)
+                                : null;
+                            added
+                                ? myController.lastRowNo(
+                                    // row: myController.lastRow + 1,
+                                    col: myController.lastColumn)
+                                : null;
+                            added ? Navigator.pop(context) : null;
                           }
                         },
                         child: const Padding(
@@ -240,63 +244,72 @@ class _AddNewStudentState extends State<AddNewStudent> {
                       const SizedBox(height: 25),
                       const Text('1. roll, 2. name, 3. phone, 4. caterory'),
                       const SizedBox(height: 25),
-                      myController.studentAdding ? const SizedBox() : ElevatedButton(
-                        onPressed: () async {
-                          if (!myController.studentAdding && _formKey2.currentState!.validate()) {
-                            myController.updateAddingProccess(true);
-                            await AttendanceSheetApi.getStudentData(
-                              context: context,
-                              ssid: spresdSheetId,
-                              sheetname: sheetName,
-                            );
-                            //---
-                            for (var d in myController.test) {
-                              final student = {
-                                Student.roll: d['roll'],
-                                Student.name: d['name'],
-                                Student.phone: d['phone'],
-                                Student.caterory: d['caterory'],
-                              };
-                              await AttendanceSheetApi.insertRow(
-                                  [student], context);
-                              await myController.addNewStudent(
-                                roll: d['roll'],
-                                name: d['name'],
-                                phone: d['phone'],
-                                caterory: d['caterory'],
-                                date:
-                                    '${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year} ${DateTime.now().hour}:${DateTime.now().minute}',
-                                // row: myController.lastRow + 1,
-                                p: false,
-                              );//
-                              await myController.lastRowNo(
-                                  // row: myController.lastRow + 1,
-                                  col: myController.lastColumn);
-                            }
-                            myController.updateAddingProccess(false);
-                            Navigator.pop(context);
-                          }
-                        },
-                        child: const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(
-                            'Add Students From Excel',
-                            style: TextStyle(fontSize: 18.0),
-                          ),
-                        ),
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              myController.studentAdding ? MyColor.appBarColor.withOpacity(0.5) : MyColor.appBarColor),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.0),
-                            ),
-                          ),
-                        ),
-                      ),
                       myController.studentAdding
-                          ? CircularProgressIndicator(color: MyColor.appBarColor,)
+                          ? const SizedBox()
+                          : ElevatedButton(
+                              onPressed: () async {
+                                if (!myController.studentAdding &&
+                                    _formKey2.currentState!.validate()) {
+                                  myController.updateAddingProccess(true);
+                                  await AttendanceSheetApi.getStudentData(
+                                    context: context,
+                                    ssid: spresdSheetId,
+                                    sheetname: sheetName,
+                                  );
+                                  //---
+                                  for (var d in myController.test) {
+                                    final student = {
+                                      Student.roll: d['roll'],
+                                      Student.name: d['name'],
+                                      Student.phone: d['phone'],
+                                      Student.caterory: d['caterory'],
+                                    };
+                                    await AttendanceSheetApi.insertRow(
+                                        [student], context);
+                                    await myController.addNewStudent(
+                                      roll: d['roll'],
+                                      name: d['name'],
+                                      phone: d['phone'],
+                                      caterory: d['caterory'],
+                                      date:
+                                          '${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year} ${DateTime.now().hour}:${DateTime.now().minute}',
+                                      // row: myController.lastRow + 1,
+                                      p: false,
+                                    ); //
+                                    await myController.lastRowNo(
+                                        // row: myController.lastRow + 1,
+                                        col: myController.lastColumn);
+                                  }
+                                  myController.updateAddingProccess(false);
+                                  Navigator.pop(context);
+                                }
+                              },
+                              child: const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text(
+                                  'Add Students From Excel',
+                                  style: TextStyle(fontSize: 18.0),
+                                ),
+                              ),
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        myController.studentAdding
+                                            ? MyColor.appBarColor
+                                                .withOpacity(0.5)
+                                            : MyColor.appBarColor),
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18.0),
+                                  ),
+                                ),
+                              ),
+                            ),
+                      myController.studentAdding
+                          ? CircularProgressIndicator(
+                              color: MyColor.appBarColor,
+                            )
                           : const Text(''),
                     ],
                   ),

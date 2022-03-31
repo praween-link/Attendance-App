@@ -65,6 +65,7 @@ class LectureController extends ChangeNotifier {
         'sheet': sheetName,
         'status': false,
         'date': startDate,
+        'lastcolumn': column,
       }).then((value) => print(''));
     });
   }

@@ -39,6 +39,8 @@ class _TileCardState extends State<TileCard> {
     }
   }
 
+  String col = '';
+
   @override
   Widget build(BuildContext context) {
     var myController = Provider.of<MyController>(context);
@@ -78,9 +80,6 @@ class _TileCardState extends State<TileCard> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(widget.data[widget.index]['soft skills'] == null
-                          ? "Null"
-                          : widget.data[widget.index]['soft skills']),
                       Text(
                         LectureController.sheetName,
                         style: const TextStyle(fontWeight: FontWeight.w500),
@@ -88,17 +87,17 @@ class _TileCardState extends State<TileCard> {
                       Text(
                         'Branch & Year: ${widget.data[widget.index]['caterory']}',
                         style: const TextStyle(
-                            fontSize: 16.0, fontWeight: FontWeight.w400),
+                            fontSize: 15.0, fontWeight: FontWeight.w400),
                       ),
                       Text(
                         'Roll No: ${widget.data[widget.index]['roll']}',
                         style: const TextStyle(
-                            fontSize: 16.0, fontWeight: FontWeight.w800),
+                            fontSize: 15.0, fontWeight: FontWeight.w800),
                       ),
                       Text(
                         'Name: ${widget.data[widget.index]['name']}',
                         style: const TextStyle(
-                          fontSize: 16.0,
+                          fontSize: 15.0,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -106,8 +105,6 @@ class _TileCardState extends State<TileCard> {
                   ),
                   Row(
                     children: [
-                      Text(myController.firstColumn.toString()),
-                      Text(myController.secondColumn.toString()),
                       Text(
                         widget.data[widget.index]['attendance']
                                     [myController.selectedLecture] ??
@@ -132,15 +129,12 @@ class _TileCardState extends State<TileCard> {
                             fontSize: 18.0,
                             fontWeight: FontWeight.w800),
                       ),
-                      Text(widget.data[widget.index]['attendance']
-                                  [myController.selectedLecture] ==
-                              null
-                          ? "null"
-                          : widget.data[widget.index]['attendance']
-                                  [myController.selectedLecture]
-                              .toString()),
                     ],
-                  )
+                  ),
+                  Text(
+                    col,
+                    style: const TextStyle(fontSize: 5),
+                  ),
                 ],
               ),
               FlutterSwitch(
@@ -148,37 +142,48 @@ class _TileCardState extends State<TileCard> {
                         [myController.selectedLecture] ??
                     false,
                 onToggle: (value) async {
+                  // int findedColIndex = -1;
                   if (myController.selectedLecture != '') {
                     AttendanceSheetApi.getRows(context); //--
+                    setState(() {
+                      col = '';
+                    });
                     //---------------Column Number----------------
-                    //-------------------------------//
-                    // int findedColumnNo = -1;
-                    // for (int i = 0;
-                    //     i < BranchController.allLecutres.length;
+                    // for (int i = myController.firstColumn + 1;
+                    //     i <= myController.secondColumn;
                     //     i++) {
-                    //   // await AttendanceSheetApi.insertDate(
-                    //   //     context,
-                    //   //     "${BranchController.allLecutres[i]}-$date",
-                    //   //     row,
-                    //   //     secondC + i + 1);
-                    //   if("${BranchController.allLecutres[i]}-$date" == ){
+                    //   final colvalue = await AttendanceSheetApi
+                    //       .attendanceSheet!.cells
+                    //       .cell(column: i, row: 1);
 
+                    //   if (colvalue.value ==
+                    //       "${myController.selectedLecture}-${myController.currentDate}") {
+                    //     // setState(() {
+                    //     //   // col += myController.currentDate.toString();
+                    //     //   // col += i.toString();
+                    //     //   col += colvalue.value.toString();
+                    //     //   col += '|';
+                    //     // });
+                    //     findedColIndex = i;
                     //   }
                     // }
                     //-------------------------------//
-                    //--------------------------------------------
                     var roll = await widget.data[widget.index]['roll'];
                     int rid = myController.rowsId[roll] ?? -1;
                     final r = await AttendanceSheetApi.attendanceSheet!.cells
                         .cell(column: 1, row: rid);
+                        //
                     if (r.value == widget.data[widget.index]['roll']) {
                       await AttendanceSheetApi.attendanceSheet!
                           .values //------------------- ATTENDANCE OF STUDENT ------------------------------------------------------------------
                           .insertValue(
-                              !widget.data[widget.index]['status']
-                                  ? 'Present'
-                                  : 'Absent',
-                              column: myController.lastColumn,
+                              widget.data[widget.index]['attendance']
+                                      [myController.selectedLecture]??false
+                                  ? 'Absent'
+                                  : 'Present',
+                              // column: myController.lastColumn,
+                              // column: findedColIndex,
+                              column: myController.firstColumn+myController.selectedLectureIndex+1,
                               row: rid);
                     }
                     await widget._firestore
@@ -195,7 +200,7 @@ class _TileCardState extends State<TileCard> {
                           widget.data[widget.index]['attendance']
                                       [myController.selectedLecture] ==
                                   null
-                              ? false
+                              ? true
                               : !widget.data[widget.index]['attendance']
                                   [myController.selectedLecture]
                     });

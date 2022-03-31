@@ -14,8 +14,10 @@ import 'my_bottom_sheet.dart';
 class MyController extends ChangeNotifier {
   //
   String selectedLecture = '';
-  void seletedLectureUpdate(String s) {
+  int selectedLectureIndex = -1;
+  void seletedLectureUpdate(String s, int index) {
     selectedLecture = s;
+    selectedLectureIndex = index;
     notifyListeners();
   }
 
@@ -43,31 +45,53 @@ class MyController extends ChangeNotifier {
   String scannedRollNo = '';
   bool availableInDB = false;
   Map<String, dynamic> sturentsRowData = {};
+  //
   void changeQRResult({required String result}) async {
     qrresult = result;
     scannedRollNo = qrresult.split('\n')[0];
     availableInDB = studentsId.contains(scannedRollNo);
     //
     if (availableInDB) {
-      // int rr = sturentsRowData[scannedRollNo] ?? -1;
-      int rid = rowsId[scannedRollNo] ?? -1;
+      // int rid = rowsId[scannedRollNo] ?? -1;
       // final r = await AttendanceSheetApi.attendanceSheet!.cells
-      //     .cell(column: 1, row: rr);
-      final r = await AttendanceSheetApi.attendanceSheet!.cells
-          .cell(column: 1, row: rid);
+      //     .cell(column: 1, row: rid);
 
-      if (r.value == scannedRollNo) {
-        await AttendanceSheetApi.attendanceSheet!.values
-            .insertValue('Present', column: lastColumn, row: rid);
-      }
-      await _firestore
-          .collection('AttendanceP')
-          .doc(BranchController.branchId)
-          .collection('${BranchController.branchId}s')
-          .doc(LectureController.lectureId)
-          .collection(LectureController.lectureCollection)
-          .doc(scannedRollNo)
-          .update({'status': true});
+      // if (r.value == scannedRollNo) {
+      //   await AttendanceSheetApi.attendanceSheet!.values.insertValue('Present',
+      //       column: firstColumn + selectedLectureIndex + 1, row: rid);
+      // }
+      // await _firestore
+      //     .collection('AttendanceP')
+      //     .doc(BranchController.branchId)
+      //     .collection('${BranchController.branchId}s')
+      //     .doc(LectureController.lectureId)
+      //     .collection(LectureController.lectureCollection)
+      //     .doc(scannedRollNo)
+      //     .update({'status': true});
+      // var roll = await widget.data[widget.index]['roll'];
+                    int rid = rowsId[scannedRollNo] ?? -1;
+                    final r = await AttendanceSheetApi.attendanceSheet!.cells
+                        .cell(column: 1, row: rid);
+                        //
+                    if (r.value == scannedRollNo) {
+                      await AttendanceSheetApi.attendanceSheet!
+                          .values //------------------- ATTENDANCE OF STUDENT ------------------------------------------------------------------
+                          .insertValue('Present',
+                              column: firstColumn+selectedLectureIndex+1,
+                              row: rid);
+                    }
+                    await _firestore
+                        .collection('AttendanceP')
+                        .doc(BranchController.branchId)
+                        .collection('${BranchController.branchId}s')
+                        .doc(LectureController.lectureId)
+                        .collection(LectureController.lectureCollection)
+                        .doc(scannedRollNo)
+                        // .update({'status': ! widget.data[widget.index]['status']});
+                        .update({
+                      'attendance.$selectedLecture': true
+                    });
+                  
     }
     //
     notifyListeners();
@@ -160,7 +184,9 @@ class MyController extends ChangeNotifier {
       {required BuildContext context,
       required String date,
       required int row,
-      required int col, required int firstC, required int secondC}) async {
+      required int col,
+      required int firstC,
+      required int secondC}) async {
     final r = await AttendanceSheetApi.attendanceSheet!.values
         .value(column: col, row: 1);
     // xx = '$col, $r, "d-$date"';
@@ -190,11 +216,8 @@ class MyController extends ChangeNotifier {
       //
       //-------------------------------//
       for (int i = 0; i < BranchController.allLecutres.length; i++) {
-        await AttendanceSheetApi.insertDate(
-            context,
-            "${BranchController.allLecutres[i]}-$date",
-            row,
-            secondC + i + 1);
+        await AttendanceSheetApi.insertDate(context,
+            "${BranchController.allLecutres[i]}-$date", row, secondC + i + 1);
       }
       //-------------------------------//
     }
@@ -276,7 +299,7 @@ class MyController extends ChangeNotifier {
                     d['column'],
                     d['date']);
 
-                currentColumnUpdate(d['lastcolumn'], d['column']);
+                currentColumnUpdate(d['lastcolumn'] ?? 0, d['column'] ?? 0);
               } else {
                 studentsId.add(d.id);
                 studentsId = studentsId.toSet().toList();
@@ -371,7 +394,9 @@ class MyController extends ChangeNotifier {
                                           date:
                                               '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
                                           row: 1,
-                                          col: lastColumn, firstC: firstColumn, secondC: secondColumn);
+                                          col: lastColumn,
+                                          firstC: firstColumn,
+                                          secondC: secondColumn);
                                     },
                                     child: Container(
                                       child: Padding(
@@ -409,23 +434,45 @@ class MyController extends ChangeNotifier {
                               ),
                               //=======================
                               GestureDetector(
-                                child: Text(
-                                  '${selectedLecture == '' ? "Select Lecture" : "Selected Lecture - "} $selectedLecture',
-                                  style: const TextStyle(
-                                    decoration: TextDecoration.underline,
+                                child: Container(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 18.0,
+                                        right: 18.0,
+                                        top: 2.0,
+                                        bottom: 2.0),
+                                    child: Text(
+                                      '${selectedLecture == '' ? "Select Lecture" : "Selected Lecture - "} $selectedLecture',
+                                      style: const TextStyle(
+                                          decoration: TextDecoration.underline,
+                                          fontSize: 16,
+                                          color: Colors.black),
+                                    ),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.withOpacity(0.8),
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(5),
+                                    ),
                                   ),
                                 ),
                                 onTap: () {
+                                  // showModalBottomSheet<void>(
+                                  //   context: context,
+                                  //   builder: (BuildContext context) {
+                                  // return const MyBottomSheet();
+                                  //   },
+                                  // );
                                   showModalBottomSheet<void>(
+                                    isScrollControlled: true,
+                                    // backgroundColor: Colors.grey.withOpacity(0.9),
                                     context: context,
-                                    builder: (BuildContext context) {
-                                      return const MyBottomSheet();
-                                    },
+                                    builder: (context) => const MyBottomSheet(),
                                   );
                                 },
                               ),
                               ////==============================
-                              Text(BranchController.allLecutres.toString()),
+                              // Text(BranchController.allLecutres.toString()),
                               TextFormField(
                                 initialValue: searchingKey,
                                 onChanged: (value) => updateKey(value),
@@ -573,3 +620,29 @@ class MyController extends ChangeNotifier {
     }
   }
 }
+
+
+
+//
+// showModalBottomSheet<void>(
+//                 isScrollControlled: true,
+//                 // backgroundColor: Colors.grey.withOpacity(0.9),
+//                 context: context,
+//                 builder: (context) => SingleChildScrollView(
+//                   child: Container(
+//                     padding: EdgeInsets.only(
+//                         bottom: MediaQuery.of(context).viewInsets.bottom),
+//                     child: Container(
+//                       height: MediaQuery.of(context).size.height / 1.8,
+//                       padding: const EdgeInsets.all(30.0),),
+//                     width: MediaQuery.of(context).size.width,
+//                     decoration: BoxDecoration(
+//                       color: Colors.grey.withOpacity(0.5),
+//                       // borderRadius: const BorderRadius.only(
+//                       //   topRight: Radius.circular(20.0),
+//                       //   topLeft: Radius.circular(20.0),
+//                       // ),
+//                     ),
+//                   ),
+//                 ),
+//               );

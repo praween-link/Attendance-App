@@ -43,9 +43,6 @@ class _AllStudentsState extends State<AllStudents> {
               }),
         ),
         actions: [
-          Text(BranchController.allLecutres.length.toString()),
-          Text(
-              "${controller.lastColumn.toString()}-${controller.lastColumn.toString()}"),
           IconButton(
             onPressed: () async {
               // final r = await AttendanceSheetApi.attendanceSheet!.cells
@@ -112,12 +109,6 @@ class _AllStudentsState extends State<AllStudents> {
         ],
       ),
       body: controller.getAllStudents(),
-      // body: SingleChildScrollView(
-      //   child: Text(
-      //     controller.tt.toString(),
-      //   ),
-      // ),
-      // body: Center(child: Text(ti.toString())),
     );
   }
 
