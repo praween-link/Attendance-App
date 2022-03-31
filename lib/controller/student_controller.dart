@@ -1,15 +1,11 @@
 // ignore_for_file: avoid_print
 
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:gthqrscanner/constants/colors/mycolor.dart';
 import 'package:gthqrscanner/controller/branch_controller.dart';
 import 'package:gthqrscanner/controller/lecture_controller.dart';
 import 'package:gthqrscanner/services/google_sheets/attendance_sheets.dart';
-import 'package:gthqrscanner/views/students/tile_box.dart';
-
-import 'my_bottom_sheet.dart';
+import 'package:gthqrscanner/views/students/widgets/student_list_view.dart';
 
 class MyController extends ChangeNotifier {
   //
@@ -34,12 +30,6 @@ class MyController extends ChangeNotifier {
     notifyListeners();
   }
 
-  // bool attendanceProcess = false;
-  // void updateAttendanceProcess(bool attendance) {
-  //   attendanceProcess = attendance;
-  //   notifyListeners();
-  // }
-
   //--- Scannering result data ---
   String qrresult = 'No data';
   String scannedRollNo = '';
@@ -52,46 +42,25 @@ class MyController extends ChangeNotifier {
     availableInDB = studentsId.contains(scannedRollNo);
     //
     if (availableInDB) {
-      // int rid = rowsId[scannedRollNo] ?? -1;
-      // final r = await AttendanceSheetApi.attendanceSheet!.cells
-      //     .cell(column: 1, row: rid);
-
-      // if (r.value == scannedRollNo) {
-      //   await AttendanceSheetApi.attendanceSheet!.values.insertValue('Present',
-      //       column: firstColumn + selectedLectureIndex + 1, row: rid);
-      // }
-      // await _firestore
-      //     .collection('AttendanceP')
-      //     .doc(BranchController.branchId)
-      //     .collection('${BranchController.branchId}s')
-      //     .doc(LectureController.lectureId)
-      //     .collection(LectureController.lectureCollection)
-      //     .doc(scannedRollNo)
-      //     .update({'status': true});
-      // var roll = await widget.data[widget.index]['roll'];
-                    int rid = rowsId[scannedRollNo] ?? -1;
-                    final r = await AttendanceSheetApi.attendanceSheet!.cells
-                        .cell(column: 1, row: rid);
-                        //
-                    if (r.value == scannedRollNo) {
-                      await AttendanceSheetApi.attendanceSheet!
-                          .values //------------------- ATTENDANCE OF STUDENT ------------------------------------------------------------------
-                          .insertValue('Present',
-                              column: firstColumn+selectedLectureIndex+1,
-                              row: rid);
-                    }
-                    await _firestore
-                        .collection('AttendanceP')
-                        .doc(BranchController.branchId)
-                        .collection('${BranchController.branchId}s')
-                        .doc(LectureController.lectureId)
-                        .collection(LectureController.lectureCollection)
-                        .doc(scannedRollNo)
-                        // .update({'status': ! widget.data[widget.index]['status']});
-                        .update({
-                      'attendance.$selectedLecture': true
-                    });
-                  
+      int rid = rowsId[scannedRollNo] ?? -1;
+      final r = await AttendanceSheetApi.attendanceSheet!.cells
+          .cell(column: 1, row: rid);
+      //
+      if (r.value == scannedRollNo) {
+        await AttendanceSheetApi.attendanceSheet!
+            .values //------------------- ATTENDANCE OF STUDENT ------------------------------------------------------------------
+            .insertValue('Present',
+                column: firstColumn + selectedLectureIndex + 1, row: rid);
+      }
+      await firestore
+          .collection('AttendanceP')
+          .doc(BranchController.branchId)
+          .collection('${BranchController.branchId}s')
+          .doc(LectureController.lectureId)
+          .collection(LectureController.lectureCollection)
+          .doc(scannedRollNo)
+          // .update({'status': ! widget.data[widget.index]['status']});
+          .update({'attendance.$selectedLecture': true});
     }
     //
     notifyListeners();
@@ -107,7 +76,7 @@ class MyController extends ChangeNotifier {
   }
 
   //---------------------------FIREBASE-------------------
-  final _firestore = FirebaseFirestore.instance;
+  final firestore = FirebaseFirestore.instance;
   List<Map<String, dynamic>> allstudents = [];
 
   String fwithP = 'true';
@@ -142,7 +111,7 @@ class MyController extends ChangeNotifier {
       required String date,
       // required int row,
       required bool p}) async {
-    _firestore
+    firestore
         .collection('AttendanceP')
         .doc(BranchController.branchId)
         .collection('${BranchController.branchId}s')
@@ -166,7 +135,7 @@ class MyController extends ChangeNotifier {
   }
 
   Future deleteStudentData({required String roll}) async {
-    _firestore
+    firestore
         .collection('AttendanceP')
         .doc(BranchController.branchId)
         .collection('${BranchController.branchId}s')
@@ -196,7 +165,7 @@ class MyController extends ChangeNotifier {
           col + BranchController.allLecutres.length + 1);
       //
 
-      _firestore
+      firestore
           .collection('AttendanceP')
           .doc(BranchController.branchId)
           .collection('${BranchController.branchId}s')
@@ -225,7 +194,7 @@ class MyController extends ChangeNotifier {
   }
 
   Future lastRowNo({required int col}) async {
-    _firestore
+    firestore
         .collection('AttendanceP')
         .doc(BranchController.branchId)
         .collection('${BranchController.branchId}s')
@@ -280,7 +249,7 @@ class MyController extends ChangeNotifier {
   ///
   getAllStudents() {
     return StreamBuilder<QuerySnapshot>(
-      stream: _firestore
+      stream: firestore
           .collection('AttendanceP')
           .doc(BranchController.branchId)
           .collection('${BranchController.branchId}s')
@@ -358,216 +327,7 @@ class MyController extends ChangeNotifier {
             }
           }
 
-          return ListView.builder(
-            itemCount: data.length + 1,
-            itemBuilder: (BuildContext context, int index) {
-              // for (String s in BranchController.allLecutres) {
-              //   items.add(s);
-              // }
-              return index == 0
-                  ? Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Container(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Today: ${currentDate.toString()}',
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 15),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () async {
-                                      await AttendanceSheetApi.getRows(
-                                          context); //--
-                                      //
-                                      addTodayDate(
-                                          context: context,
-                                          date:
-                                              '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
-                                          row: 1,
-                                          col: lastColumn,
-                                          firstC: firstColumn,
-                                          secondC: secondColumn);
-                                    },
-                                    child: Container(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 10.0,
-                                            right: 10.0,
-                                            top: 2.0,
-                                            bottom: 2.0),
-                                        child: Text(
-                                          rowsId.isNotEmpty
-                                              ? 'Active'
-                                              : 'Not active',
-                                          style: TextStyle(
-                                            color: rowsId.isNotEmpty
-                                                ? Colors.green
-                                                : Colors.red,
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w800,
-                                          ),
-                                        ),
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.5),
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(10.0)),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SelectableText(
-                                "Lecture: ${LectureController.sheetName} (google sheet's name)",
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w600, fontSize: 15),
-                              ),
-                              //=======================
-                              GestureDetector(
-                                child: Container(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 18.0,
-                                        right: 18.0,
-                                        top: 2.0,
-                                        bottom: 2.0),
-                                    child: Text(
-                                      '${selectedLecture == '' ? "Select Lecture" : "Selected Lecture - "} $selectedLecture',
-                                      style: const TextStyle(
-                                          decoration: TextDecoration.underline,
-                                          fontSize: 16,
-                                          color: Colors.black),
-                                    ),
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.withOpacity(0.8),
-                                    borderRadius: const BorderRadius.all(
-                                      Radius.circular(5),
-                                    ),
-                                  ),
-                                ),
-                                onTap: () {
-                                  // showModalBottomSheet<void>(
-                                  //   context: context,
-                                  //   builder: (BuildContext context) {
-                                  // return const MyBottomSheet();
-                                  //   },
-                                  // );
-                                  showModalBottomSheet<void>(
-                                    isScrollControlled: true,
-                                    // backgroundColor: Colors.grey.withOpacity(0.9),
-                                    context: context,
-                                    builder: (context) => const MyBottomSheet(),
-                                  );
-                                },
-                              ),
-                              ////==============================
-                              // Text(BranchController.allLecutres.toString()),
-                              TextFormField(
-                                initialValue: searchingKey,
-                                onChanged: (value) => updateKey(value),
-                                decoration: const InputDecoration(
-                                  hintText: 'Search student',
-                                  prefixIcon: Icon(Icons.search,
-                                      color: Colors.blueGrey),
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Colors.blueGrey),
-                                  ),
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Colors.blueGrey),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color:
-                                  MyColor.buttonSplaceColor5.withOpacity(0.6),
-                              offset: const Offset(0, 0),
-                              blurRadius: 5,
-                              spreadRadius: 5,
-                            ),
-                            BoxShadow(
-                              color: MyColor.buttonColor.withOpacity(0.6),
-                              offset: const Offset(3, 3),
-                              blurRadius: 2,
-                              spreadRadius: 5,
-                            ),
-                            BoxShadow(
-                              color: MyColor.buttonColor.withOpacity(0.2),
-                              offset: const Offset(0, 8),
-                              blurRadius: 0,
-                              spreadRadius: 5,
-                            ),
-                          ],
-                          borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(5),
-                              bottomRight: Radius.circular(5)),
-                        ),
-                      ),
-                    )
-                  : GestureDetector(
-                      onLongPress: () {
-                        AwesomeDialog(
-                          context: context,
-                          animType: AnimType.SCALE,
-                          dialogType: DialogType.WARNING,
-                          body: Center(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Delete roll-${data[index - 1]['roll']}!',
-                                  style: const TextStyle(
-                                    color: Colors.orange,
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                const SizedBox(height: 8),
-                                const Text(
-                                  'Are you sure to delete student!',
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          ),
-                          btnCancelOnPress: () {},
-                          btnCancelText: 'NO',
-                          btnOkOnPress: () {
-                            //validate
-                            deleteStudentData(roll: data[index - 1]['roll']);
-                            // Navigator.pop(context);
-                          },
-                          btnOkText: 'YES',
-                        ).show();
-                      },
-                      child: TileCard(
-                          data: data, firestore: _firestore, index: index - 1),
-                    );
-            },
-          );
+          return StudentListView(data: data);
         } else if (snapshot.hasError) {
           return const Center(child: Text('Something went wrong'));
         }
@@ -580,7 +340,7 @@ class MyController extends ChangeNotifier {
 
   List<Map<String, dynamic>> mydata = [];
   getAllStudentsFromDB() async {
-    var snapshots = _firestore
+    var snapshots = firestore
         .collection('AttendanceP')
         .doc(BranchController.branchId)
         .collection('${BranchController.branchId}s')
@@ -605,7 +365,7 @@ class MyController extends ChangeNotifier {
   void resetAllStudentsAttendance({required List<String> studentsId}) {
     List<String> ids = studentsId.toSet().toList();
     for (String studentid in ids) {
-      _firestore
+      firestore
           .collection('AttendanceP')
           .doc(BranchController.branchId)
           .collection('${BranchController.branchId}s')
@@ -620,29 +380,3 @@ class MyController extends ChangeNotifier {
     }
   }
 }
-
-
-
-//
-// showModalBottomSheet<void>(
-//                 isScrollControlled: true,
-//                 // backgroundColor: Colors.grey.withOpacity(0.9),
-//                 context: context,
-//                 builder: (context) => SingleChildScrollView(
-//                   child: Container(
-//                     padding: EdgeInsets.only(
-//                         bottom: MediaQuery.of(context).viewInsets.bottom),
-//                     child: Container(
-//                       height: MediaQuery.of(context).size.height / 1.8,
-//                       padding: const EdgeInsets.all(30.0),),
-//                     width: MediaQuery.of(context).size.width,
-//                     decoration: BoxDecoration(
-//                       color: Colors.grey.withOpacity(0.5),
-//                       // borderRadius: const BorderRadius.only(
-//                       //   topRight: Radius.circular(20.0),
-//                       //   topLeft: Radius.circular(20.0),
-//                       // ),
-//                     ),
-//                   ),
-//                 ),
-//               );

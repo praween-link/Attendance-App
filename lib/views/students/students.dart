@@ -2,7 +2,6 @@ import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gthqrscanner/constants/colors/mycolor.dart';
-import 'package:gthqrscanner/controller/branch_controller.dart';
 import 'package:gthqrscanner/controller/student_controller.dart';
 import 'package:gthqrscanner/views/add/student/add_student.dart';
 import 'package:provider/provider.dart';
@@ -17,13 +16,6 @@ class AllStudents extends StatefulWidget {
 
 class _AllStudentsState extends State<AllStudents> {
   String scanningError = '';
-  // @override
-  // void initState() {
-  //   super.initState(); //updateKey
-  //   var controller = Provider.of<MyController>(context);
-  //   controller.updateKey('');
-  // }
-
   @override
   Widget build(BuildContext context) {
     var controller = Provider.of<MyController>(context);

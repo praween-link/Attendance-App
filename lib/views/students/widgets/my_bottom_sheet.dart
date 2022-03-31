@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'branch_controller.dart';
-import 'student_controller.dart';
+import '../../../controller/branch_controller.dart';
+import '../../../controller/student_controller.dart';
 
 class MyBottomSheet extends StatefulWidget {
   const MyBottomSheet({Key? key}) : super(key: key);

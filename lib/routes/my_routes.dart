@@ -8,7 +8,7 @@ import 'package:gthqrscanner/views/add/lecture/add_lecture.dart';
 import 'package:gthqrscanner/views/add/branch/connect_new_sheet.dart';
 import 'package:gthqrscanner/views/branch_home_screen/home_screen.dart';
 import 'package:gthqrscanner/views/splash_screen.dart';
-import 'package:gthqrscanner/views/students/view_all_students.dart';
+import 'package:gthqrscanner/views/students/students.dart';
 
 class Routes {
   MaterialPageRoute<void> myMaterialPageRoute(

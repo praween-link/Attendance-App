@@ -1,21 +1,32 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:gthqrscanner/constants/colors/mycolor.dart';
-import 'package:gthqrscanner/views/lecture_screen/lectures.dart';
+import 'package:gthqrscanner/views/branch_home_screen/widgets/branch_list_view.dart';
 
 class BranchController extends ChangeNotifier {
   final _firebase = FirebaseFirestore.instance;
   static String spreadSheetId = '';
   static String spreadSheetTitle = '';
   static List<String> allLecutres = [];
-  // static String selectedLecture = '';
-  // void updateSelectedLecture(String s) {
-  //   selectedLecture = s;
-  //   notifyListeners();
-  // }
 
-  //
+  void mySpreadSheetId(String spid) {
+    spreadSheetId = spid;
+    notifyListeners();
+  }
+
+  void mySpreadSheetTitle(String sptitle) {
+    spreadSheetTitle = sptitle;
+    notifyListeners();
+  }
+
+  void myAllLecutres(List<String> lectures) {
+    allLecutres = lectures;
+  }
+
   static String branchId = '';
+  void myBranchId(String id) {
+    branchId = id;
+    notifyListeners();
+  }
   //---------
 
   void addNewSheet(
@@ -41,104 +52,13 @@ class BranchController extends ChangeNotifier {
     }).then((value) => print(''));
   }
 
-  // void deleteLecture(String key) {
-  //   _firebase.collection('AttendanceP').doc(key).delete().then(
-  //         (value) => print(''),
-  //       );
-  // }
-
-  //
-  //
   getAllBranchFromDB() {
     return StreamBuilder<QuerySnapshot>(
       stream: _firebase.collection('AttendanceP').snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasData) {
           var data = snapshot.data!.docs;
-          return ListView.builder(
-              itemCount: data.length + 1,
-              itemBuilder: (context, int index) {
-                if (index != 0) {
-                  allLecutres = data[index - 1]['lectures'].cast<String>();
-                }
-                return index == 0
-                    ? Column(
-                        children: [
-                          const SizedBox(height: 35),
-                          Container(
-                            margin: const EdgeInsets.only(left: 50, right: 50),
-                            child: ClipRRect(
-                              child: Image.asset('assets/img/ghublogo.png'),
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(10.0)),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            'Geeta Technical Hub', //Attendance App
-                            style: TextStyle(
-                              color: MyColor.textcolor5,
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 1.2,
-                            ),
-                          ),
-                          Text(
-                            'ATTENDANCE',
-                            style: TextStyle(
-                              color: MyColor.textcolor5,
-                              fontSize: 12.0,
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: 1.2,
-                            ),
-                          ),
-                          const SizedBox(height: 30),
-                        ],
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.only(
-                            left: 18.0, right: 18.0, bottom: 8.0, top: 8.0),
-                        child: GestureDetector(
-                          onTap: () {
-                            branchId = data[index - 1].id;
-                            spreadSheetId = data[index - 1]['spreadSheetId'];
-                            spreadSheetTitle = data[index - 1]['title'];
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const Lectures(),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            child: Padding(
-                              padding: const EdgeInsets.all(18.0),
-                              child: Text(
-                                data[index - 1]['title'],
-                                style: const TextStyle(
-                                  fontSize: 18.0,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            decoration: BoxDecoration(
-                                color: MyColor.buttonColor,
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(50.0),
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    offset: const Offset(4, 8),
-                                    color: MyColor.buttonSplaceColor5,
-                                    blurRadius: 8.0,
-                                    spreadRadius: 2,
-                                  ),
-                                ]),
-                          ),
-                        ),
-                      );
-              });
+          return BranchListViewBuilder(data: data);
         } else if (snapshot.hasError) {
           return const Center(child: Text('Something is wrong!'));
         }

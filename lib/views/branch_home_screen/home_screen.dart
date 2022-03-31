@@ -19,16 +19,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     var controller = Provider.of<MyController>(context);
     var branchController = Provider.of<BranchController>(context);
-    // List<String> l = ['Hello1', 'Hello2', 'Hello3'];
     return Scaffold(
       appBar: AppBar(
-        // leading: Icon(Icons.menu),
-        // // leading: Builder(
-        // //   builder: (BuildContext context) => GestureDetector(
-        // //     child: Image.asset('assets/img/menu_icon.png'),
-        // //     onTap: () => Scaffold.of(context).openDrawer(),
-        // //   ),
-        // // ),
         backgroundColor: MyColor.appBarColor,
         title: const Text('GTH Attendance App'),
       ),
