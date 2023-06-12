@@ -23,8 +23,8 @@ class Routes {
             return const SampleItemListView();
           case HomeScreen.myroute:
             return const HomeScreen();
-          case ScannerApp.myroute:
-            return const ScannerApp();
+          // case ScannerApp.myroute:
+          //   return const ScannerApp();
           case AddNewStudent.myroute:
             return const AddNewStudent();
           case AllStudents.routeName:

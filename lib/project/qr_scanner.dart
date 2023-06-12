@@ -1,4 +1,4 @@
-import 'package:barcode_scan2/barcode_scan2.dart';
+// import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -39,16 +39,16 @@ class _ScanQRCodeState extends State<ScanQRCode> {
   Future qrscan(BuildContext constext) async {
     var controller = Provider.of<MyController>(context, listen: false);
     try {
-      await BarcodeScanner.scan().then(
-        (value) => controller.changeQRResult(value.rawContent.toString()),
-      );
+      // await BarcodeScanner.scan().then(
+      //   (value) => controller.changeQRResult(value.rawContent.toString()),
+      // );
     } on PlatformException catch (error) {
-      if (error.code == BarcodeScanner.cameraAccessDenied) {
-        setState(
-            () => scanningError = 'The user did not grant the camera permission!');
-      } else {
-        setState(() => scanningError = 'Unknown error: $error');
-      }
+      // if (error.code == BarcodeScanner.cameraAccessDenied) {
+      //   setState(
+      //       () => scanningError = 'The user did not grant the camera permission!');
+      // } else {
+      //   setState(() => scanningError = 'Unknown error: $error');
+      // }
     } on FormatException {
       setState(() =>
           scanningError = 'null (User returned using the "back"-button before scan');
